@@ -17,6 +17,7 @@ Authors@R: c(
     person("Anna", "Scharl", role = "aut"),
     person("Tanja", "Kutscher", email = "tanja.kutscher@lifbi.de", role = "aut"),
     person("Timo", "Gnambs", email = "timo.gnambs@lifbi.de", role = "aut"),
+    person("Matthias", "Kloft", email = "matthias.kloft@lifbi.de", role = "aut"),
     person("Christian", "Diegel", role = "ctb"),
     person("Rachael", "Kyalo", role = "ctb")
   )
