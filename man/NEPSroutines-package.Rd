@@ -31,6 +31,7 @@ Authors:
   \item Anna Scharl
   \item Tanja Kutscher \email{tanja.kutscher@lifbi.de}
   \item Timo Gnambs \email{timo.gnambs@lifbi.de}
+  \item Matthias Kloft \email{matthias.kloft@lifbi.de}
 }
 
 Other contributors:
