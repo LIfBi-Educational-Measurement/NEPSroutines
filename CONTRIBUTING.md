@@ -177,7 +177,7 @@ steps:
 git commit -m "prepare release vX.Y.Z"
 ```
 
-3.  **Create a** **tag** with the version name:
+3.  **Create a tag** with the version name:
 
 ``` bash
 git tag vX.Y.Z
@@ -195,12 +195,17 @@ git push --tags
     “create new release” and add changes since last release as release
     notes.
 
+6.  **Create a binary TAR-Ball** and upload it to the release page (only
+    this file includes the vignettes):
+
+``` r
+devtools::build()
+```
+
 Congratulations, you’ve just created a new release! :)
 
-### Create TAR-Ball
-
-If required, create a TAR-ball from the release page on GitHub and send
-it to the FDZ or upload it on the Netzlaufwerk.
+If necessary, send the binary TAR-Ball created in step 6 to the FDZ
+and/or upload it on the Netzlaufwerk.
 
 ## Development Conventions
 
