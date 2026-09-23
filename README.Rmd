@@ -51,16 +51,29 @@ To make your work reproducible, install the latest official release of
 the package. On
 [GitHub](https://github.com/LIfBi-Educational-Measurement/NEPSroutines),
 go to the panel "Releases" on the right. There, you find the number of
-the latest release (e.g., "Release v1.3.0").
+the latest release (e.g., "Release v1.3.0"). From the release page,
+download the NEPSroutines file in TAR.GZ format.
 
-You can install the latest release of NEPSroutines using:
+Install the TAR-Ball locally with:
 
 ``` r
-install.packages("pak")
-pak::pak("LIfBi-Educational-Measurement/NEPSroutines@vX.Y.Z")
+install.packages(
+  "PATH/TO/DIRECTORY/NEPSroutines-X.Y.Z.tar.gz",
+  type = "source",
+  repos = NULL
+)
 ```
 
-Replace X.Y.Z with the actual version number.
+Replace PATH/TO/DIRECTORY with your local path and X.Y.Z with the actual
+version number. R might request you to install some of the package
+dependencies (i.e., other R packages that are used by NEPSroutines)
+first. You can do this with:
+
+``` r
+install.packages("name_of_package_1")
+install.packages("name_of_package_2")
+...
+```
 
 ### Load Package
 
