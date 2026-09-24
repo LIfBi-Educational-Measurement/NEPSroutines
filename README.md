@@ -1,11 +1,10 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 # NEPSroutines
 
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/j-welling/NEPSroutines/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/j-welling/NEPSroutines/actions/workflows/R-CMD-check.yaml)
+
 <!-- badges: end -->
 
 NEPSroutines is an R package that provides a collection of functions for
@@ -32,16 +31,13 @@ polytomous responses.
 ### Installation
 
 To make your work reproducible, install the latest official release of
-the package. On the GitHub page of NEPSroutines, go to the panel
-“Releases” on the right. There, you find the number of the latest
-release (e.g., “Release v1.3.0”).
+the package. On
+[GitHub](https://github.com/LIfBi-Educational-Measurement/NEPSroutines),
+go to the panel “Releases” on the right. There, you find the number of
+the latest release (e.g., “Release v1.3.0”). From the release page,
+download the NEPSroutines file in TAR.GZ format.
 
-You can install NEPSroutines in different ways:
-
-#### TAR-Ball
-
-Click on the page of the latest release. Download the source code in
-TAR.GZ format. Install the TAR-Ball locally with:
+Install the TAR-Ball locally with:
 
 ``` r
 install.packages(
@@ -52,23 +48,20 @@ install.packages(
 ```
 
 Replace PATH/TO/DIRECTORY with your local path and X.Y.Z with the actual
-version number.
-
-#### From GitHub
-
-You can also install the newest version of NEPSroutines from
-[GitHub](https://github.com/) with:
+version number. R might request you to install some of the package
+dependencies (i.e., other R packages that are used by NEPSroutines)
+first. You can do this with:
 
 ``` r
-install.packages("pak")
-pak::pak("LIfBi-Educational-Measurement/NEPSroutines@vX.Y.Z")
+install.packages("name_of_package_1")
+install.packages("name_of_package_2")
+...
 ```
 
-Replace X.Y.Z with the actual version number.
+### Load Package
 
-#### Load Package
-
-Once installed, you can load the package like any other R package:
+Once installed, you can load the package like any other R package at the
+beginning of your session:
 
 ``` r
 library(NEPSroutines)
@@ -96,7 +89,8 @@ CONTRIBUTING file.
 ### Installation of Development Version
 
 You can install the development version of NEPSroutines from
-[GitHub](https://github.com/) with:
+[GitHub](https://github.com/LIfBi-Educational-Measurement/NEPSroutines)
+with:
 
 ``` r
 install.packages("pak")
