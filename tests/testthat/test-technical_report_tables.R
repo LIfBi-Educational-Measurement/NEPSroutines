@@ -311,6 +311,31 @@ test_that("TblSteps() derives the constrained step from the rounded steps", {
 })
 
 
+test_that("TblSteps() reads values of any size", {
+
+  skip_if_not_installed("flextable")
+  skip_if_not_installed("officer")
+
+  # Values of 10 or more, without decimals (digits = 0) or in scientific
+  # notation used to print as empty cells.
+  tab <- data.frame(
+    item  = c("itemA", "itemB", "itemC"),
+    step1 = c("12.345 (10.456)", "2 (0)", "1e-04 (0.0500)"),
+    step2 = c("-1.346 (0.456)", "-1 (1)", "-0.5000 (0.0500)"),
+    step3 = c("-11", "-1", "0.4999")
+  )
+  tbl <- TblSteps(tab)$body$dataset
+
+  expect_equal(unlist(tbl[1, -1], use.names = FALSE),
+               c("12.35 (10.46)", "-1.35 (0.46)", "-11.00"))
+  expect_equal(unlist(tbl[2, -1], use.names = FALSE),
+               c("2.00 (0.00)", "-1.00 (1.00)", "-1.00"))
+  expect_equal(unlist(tbl[3, -1], use.names = FALSE),
+               c("0.00 (0.05)", "-0.50 (0.05)", "0.50"))
+
+})
+
+
 test_that("TblDim() works", {
 
   skip_if_not_installed("flextable")

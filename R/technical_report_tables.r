@@ -758,8 +758,11 @@ TblSteps <- function(obj, footnote = NULL, size = 10, width = 1, digits = 2,
         constrained <- i
         next
       }
-      thr <- regmatches(cell, regexpr("^\\-?\\d\\.\\d+", cell))
-      se <- regmatches(cell, regexpr("(?<=\\()\\d\\.\\d+", cell, perl = TRUE))
+      # numbers of any size, with or without decimals or an exponent
+      num <- "-?\\d+(\\.\\d+)?([eE][-+]?\\d+)?"
+      thr <- regmatches(cell, regexpr(paste0("^\\s*", num), cell))
+      se <- regmatches(cell, regexpr(paste0("(?<=\\()\\s*", num), cell,
+                                     perl = TRUE))
       step <- NA
       if (length(thr) == 1L) {
         step <- rnd(as.numeric(thr), digits = digits)
