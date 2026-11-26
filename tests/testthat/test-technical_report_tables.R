@@ -282,6 +282,35 @@ test_that("TblSteps() works", {
 })
 
 
+test_that("TblSteps() derives the constrained step from the rounded steps", {
+
+  skip_if_not_installed("flextable")
+  skip_if_not_installed("officer")
+
+  # steps_analysis() writes 3 decimals; rounding each cell to 2 decimals on its
+  # own would print 1.27 / -1.61 / 0.33, which sums to -0.01 (#154). The second
+  # row is an old (v1.3.0) cell in scientific notation, which printed as 5.55.
+  tab <- data.frame(
+    item  = c("itemA", "itemB"),
+    step1 = c("1.274 (0.050)", "-1.450 (0.070)"),
+    step2 = c("-1.608 (0.060)", "1.380 (0.080)"),
+    step3 = c("0.334", "0.070 (0.090)"),
+    step4 = c(NA, "5.551115e-17")
+  )
+  tbl <- TblSteps(tab)$body$dataset
+
+  expect_equal(unlist(tbl[1, -1], use.names = FALSE),
+               c("1.27 (0.05)", "-1.61 (0.06)", "0.34", NA))
+  expect_equal(unlist(tbl[2, -1], use.names = FALSE),
+               c("-1.45 (0.07)", "1.38 (0.08)", "0.07 (0.09)", "0.00"))
+
+  # The constrained step follows `digits`
+  tbl3 <- TblSteps(tab, digits = 3)$body$dataset
+  expect_equal(tbl3[["Step 3"]][1], "0.334")
+
+})
+
+
 test_that("TblDim() works", {
 
   skip_if_not_installed("flextable")

@@ -26,7 +26,8 @@ or sheet "steps" from "irt_poly.xlsx" created by \code{\link[=irt_analysis]{irt_
 will be applied to all columns; otherwise the length must correspond to the
 number of columns in \code{obj}.}
 
-\item{digits}{A number for rounding.}
+\item{digits}{A number for rounding. The constrained last step of each item
+is computed from the rounded steps, so each printed row sums to zero.}
 
 \item{rename_collapsed}{A boolean to remove the "_collapsed" suffix from
 item names.}
