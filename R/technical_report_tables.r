@@ -1176,11 +1176,14 @@ TblDif <- function(obj, footnote = NULL, excl = NULL,
   # Rounding
   for (i in seq_along(tab)[-1]) {
     for (j in seq_along(tab[[i]])) {
-      ustd <- regmatches(tab[j, i], regexpr("^(-|\\s)?\\d\\.\\d+", tab[j, i]))
-      std <- regmatches(tab[j, i], regexpr("(?<=\\()(-|\\s)?\\d\\.\\d+",
+      # numbers of any size, with or without decimals or an exponent; cells
+      # are padded to a common width by format() in dif_tr_tables()
+      num <- "-?\\d+(\\.\\d+)?([eE][-+]?\\d+)?"
+      ustd <- regmatches(tab[j, i], regexpr(paste0("^\\s*", num), tab[j, i]))
+      std <- regmatches(tab[j, i], regexpr(paste0("(?<=\\()\\s*", num),
                                            tab[j, i], perl = TRUE))
       dif <- NA
-      if (length(ustd == 1L)) {
+      if (length(ustd) == 1L) {
         dif <- rnd(as.numeric(ustd), digits = digits)
         if (length(std) == 1L)
           dif <- paste0(dif, " (", rnd(as.numeric(std), digits = digits), ")")
@@ -1436,8 +1439,8 @@ TblCode <- function(vars, select, collapsed = NULL, tbl = TRUE,
           paste0('dat$', collapsed$original_item[i], ' <- '),
           '  doBy::recodeVar(',
           paste0('    dat$', collapsed$original_item[i], ', ',
-                 'c(', gsub("=\\d", "", collapsed$scoring[i], perl = TRUE), '), ',
-                 'c(', gsub("\\d=", "", collapsed$scoring[i], perl = TRUE), ')'),
+                 'c(', gsub("\\s*=\\s*\\d+", "", collapsed$scoring[i]), '), ',
+                 'c(', gsub("\\d+\\s*=\\s*", "", collapsed$scoring[i]), ')'),
           '  )'
         )
     }

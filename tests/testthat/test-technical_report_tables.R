@@ -925,6 +925,45 @@ test_that("TblDif() excl matches column names exactly (#115)", {
 })
 
 
+test_that("TblDif() reads padded values of any size (#189)", {
+
+  skip_if_not_installed("flextable")
+  skip_if_not_installed("officer")
+
+  # format() pads a whole column to a common width; one value of -10 or less
+  # used to turn every cell of that column into an empty cell.
+  dif <- Import(test_path("fixtures", "ex1", "tables"), "dif_dich_TR.xlsx")
+  # The fourth cell is written with digits = 0 (no decimal point).
+  dif$estimates[["sex.0-1"]][1:4] <- c(
+    "-10.500 (-1.234)", "  0.100 (  0.050)", " -0.200 ( -0.100)", "-1 (0)"
+  )
+  tbl <- TblDif(dif)$body$dataset
+
+  expect_equal(tbl[["sex.0-1"]][1:4],
+               c("-10.50 (-1.23)", "0.10 (0.05)", "-0.20 (-0.10)",
+                 "-1.00 (0.00)"))
+  # Unchanged columns print as before
+  expect_equal(tbl[["mig.1-3"]][1:3],
+               c("-0.52 (-0.44)", "0.23 (0.19)", "-0.14 (-0.12)"))
+
+})
+
+
+test_that("TblCode() recodes scoring codes of 10 or more (#189)", {
+
+  data("ex3")
+  collapsed <- data.frame(
+    original_item = "itemA",
+    scoring = "0=0, 1=0, 9=8, 10=9, 11 = 10"
+  )
+  code <- TblCode(vars = ex3$vars, select = "mixed", collapsed = collapsed,
+                  tbl = FALSE)
+
+  expect_true(any(code == "    dat$itemA, c(0, 1, 9, 10, 11), c(0, 0, 8, 9, 10)"))
+
+})
+
+
 test_that("TblDifFit() excl matches DIF variables exactly (#115)", {
 
   skip_if_not_installed("flextable")
