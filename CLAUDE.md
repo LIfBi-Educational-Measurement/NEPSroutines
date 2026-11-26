@@ -37,4 +37,7 @@ See `dev/01_claude_reference.md` for:
 - Development conventions
 - Dependencies
 
-See `dev/91_improvement_plan.md` for the roadmap.
+See `dev/93_roadmap_2027.md` for the roadmap (releases, work packages,
+working mode, decisions) and `dev/94_release_checklist.md` for the checks
+before every release. `dev/91_improvement_plan.md` is the earlier
+improvement plan.
