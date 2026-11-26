@@ -1,6 +1,7 @@
 # NEPSroutines Roadmap 2027
 
-Overview of what each release should cover. One release per quarter. Each
+Overview of what each release should cover. One release per quarter for Q1
+and Q2; everything after that is to be decided later. Each
 quarter is split into dated work packages (WP) so the work is spread over the
 quarter rather than done at the end. All dates are target dates (Fridays for
 work packages). If a work package slips, this roadmap is updated. Issue status
@@ -19,8 +20,6 @@ A work package is done when its PRs are merged into `main`.
 |---------|---------|-------------|--------------|
 | v1.3.1  | Q1 2027 | 2027-03-19  | 2027-03-31   |
 | v1.4.0  | Q2 2027 | 2027-06-18  | 2027-06-30   |
-| v1.5.0  | Q3 2027 | 2027-09-17  | 2027-09-30   |
-| v2.0.0  | Q4 2027 | 2027-12-10  | 2027-12-17   |
 
 ## Q1 2027: v1.3.1 (patch: bugs and code health, no API changes)
 
@@ -107,31 +106,13 @@ so it no longer has to be run by hand before each release.
 - Run the [release checklist](94_release_checklist.md), with the pipeline
   tests from WP 2.2 replacing the manual comparison.
 
-## Q3 2027: v1.5.0 (minor: features)
+## Q3 2027 and later (to be decided)
 
-**WP 3.1** (due 2027-07-23)
+Not yet planned: releases, versions and dates are decided later.
+
 - #61 automatic detection of needed missing values
-
-**WP 3.2** (due 2027-08-20)
 - #96 kernel smoothing for ICC curves
-
-**WP 3.3** (due 2027-09-10)
 - #11 linking support (after #119)
 - #138 sample-size-robust fit indices (needs a methodological decision first)
-
-**Release window** (2027-09-17 to 2027-09-30)
-- Run the [release checklist](94_release_checklist.md).
-
-## Q4 2027: v2.0.0 (major)
-
 - #120 automate the full pipeline from scaling to a draft technical report
-  (builds on #119). If #120 is not ready by the code freeze, it moves to 2028
-  and this roadmap is updated.
-
-**WP 4.1: Design of the #120 pipeline** (due 2027-10-29)
-
-**WP 4.2: Implementation and migration notes** (due 2027-11-26)
-
-**Release window** (2027-12-10 to 2027-12-17)
-- Run the [release checklist](94_release_checklist.md), including the
-  major-release checks.
+  (major-version goal, builds on #119)
