@@ -1,7 +1,7 @@
 # NEPSroutines Roadmap 2027
 
-Overview of what each release should cover. One release per quarter for Q1
-and Q2; everything after that is to be decided later. Each
+Overview of what each release should cover for Q1 and Q2; everything after
+that is to be decided later. Each
 quarter is split into dated work packages (WP) so the work is spread over the
 quarter rather than done at the end. All dates are target dates (Fridays for
 work packages). If a work package slips, this roadmap is updated. Issue status
@@ -10,20 +10,32 @@ lives in the milestones on
 the release dates below should be mirrored onto the milestone due dates.
 Issues are referenced as `#n`.
 
-Base state: v1.3.0 released; milestones v1.3.1 and v1.4.0 exist.
+Base state: v1.3.0 released; milestones v1.3.1 and v1.4.0 exist. A v1.3.2
+milestone is needed for WP 1.2 and 1.3.
 
 Every release ends with a release window: code freeze, then the
 [release checklist](94_release_checklist.md), then tag and GitHub release.
 A work package is done when its PRs are merged into `main`.
 
-| Release | Quarter | Code freeze | Release date |
-|---------|---------|-------------|--------------|
-| v1.3.1  | Q1 2027 | 2027-03-19  | 2027-03-31   |
-| v1.4.0  | Q2 2027 | 2027-06-18  | 2027-06-30   |
+| Release | Type  | Content       | Code freeze | Release date |
+|---------|-------|---------------|-------------|--------------|
+| v1.3.1  | patch | WP 1.1        | 2027-01-29  | 2027-02-05   |
+| v1.3.2  | patch | WP 1.2, 1.3   | 2027-03-19  | 2027-03-31   |
+| v1.4.0  | minor | WP 2.1 to 2.4 | 2027-06-18  | 2027-06-30   |
 
-## Q1 2027: v1.3.1 (patch: bugs and code health, no API changes)
+**Patch releases.** A work package gets its own patch release when it ships
+bug fixes users benefit from and contains no new features. Work packages that
+change only tests, or that add features, do not. Until the pipeline tests
+(WP 2.2) exist, each release needs the manual result comparison, so patch
+releases are bundled rather than cut after every work package. From v1.4.0
+on, the pipeline tests make patch releases cheap, and fixes can ship when
+they are ready instead of waiting for the next minor release. Patch releases
+use the shorter patch scope of the
+[release checklist](94_release_checklist.md).
 
-No test work in this release; tests, fixtures and pipeline tests are Q2. Each
+## Q1 2027: v1.3.1 and v1.3.2 (patch: bugs and code health, no API changes)
+
+No test work in these releases; tests, fixtures and pipeline tests are Q2. Each
 fix must still leave `devtools::test()` green: a fix regenerates only the
 fixtures it breaks, and the systematic fixture work follows in WP 2.1.
 
@@ -33,6 +45,12 @@ fixtures it breaks, and the systematic fixture work follows in WP 2.1.
 - #154 sum-0 cell in `steps_analysis()` ignores `digits`
 - #152 (fix part) `TblCode()` `tam.fit()` mismatch; regenerating the stale
   ex2 fixtures is WP 2.1
+
+**Release v1.3.1** (2027-01-29 to 2027-02-05)
+- Ships the report output fixes from WP 1.1 early, because they affect the
+  technical reports users produce now.
+- Run the patch scope of the [release checklist](94_release_checklist.md),
+  with the manual comparison in `dev/manual_test_scripts/`.
 
 **WP 1.2: Silent failures, input validation, DIF** (due 2027-02-26)
 - #113 `Import()` `rename` validation
@@ -48,14 +66,14 @@ fixtures it breaks, and the systematic fixture work follows in WP 2.1.
 - #129 review `survey_paper.bib` template (needs a domain answer first)
 - #168 author order (team decision)
 - #173 remove automatic birth-year replacement in `calculate_age`: it changes
-  a default, so decide whether it ships here with a release-notes entry or
-  belongs in v1.4.0.
+  a default, so decide whether it ships in v1.3.2 with a clear `NEWS.md`
+  entry or belongs in v1.4.0. It is the least patch-like item in Q1.
 - Settle the v1.4.0 decisions listed under Q2 so WP 2.3 and 2.4 can start.
 
-**Release window** (2027-03-19 to 2027-03-31)
-- Run the [release checklist](94_release_checklist.md). Results are still
-  compared manually with `dev/manual_test_scripts/`; this is the last release
-  that does so.
+**Release v1.3.2** (2027-03-19 to 2027-03-31)
+- Run the patch scope of the [release checklist](94_release_checklist.md).
+  Results are still compared manually with `dev/manual_test_scripts/`; this
+  is the last planned release that does so.
 
 ## Q2 2027: v1.4.0 (minor: tests, then non-breaking groundwork)
 
@@ -85,6 +103,10 @@ so it no longer has to be run by hand before each release.
   `R-CMD-check.yaml`.
 - Update the "Checks and Tests" section of `CONTRIBUTING.md` and the
   [release checklist](94_release_checklist.md) to use the pipeline tests.
+- If the pipeline tests turn up real bugs, fix them and cut a v1.3.3 patch
+  release in early May. This works only while the feature work of WP 2.3 and
+  2.4 has not reached `main`, so a release can still be made from `main`
+  without a separate release branch.
 
 **WP 2.3: Result objects and reporting** (due 2027-05-28)
 - #119 lightweight S3 class layer for result objects (groundwork for #120)
@@ -102,8 +124,8 @@ so it no longer has to be run by hand before each release.
 - #74: warning, `strict` parameter, or keep the error
 - #119: which parts land in 1.4.0
 
-**Release window** (2027-06-18 to 2027-06-30)
-- Run the [release checklist](94_release_checklist.md), with the pipeline
+**Release v1.4.0** (2027-06-18 to 2027-06-30)
+- Run the full [release checklist](94_release_checklist.md), with the pipeline
   tests from WP 2.2 replacing the manual comparison.
 
 ## Q3 2027 and later (to be decided)

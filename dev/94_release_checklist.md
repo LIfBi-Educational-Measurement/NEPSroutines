@@ -5,6 +5,11 @@ Run this checklist in the release window of every release (see the
 "Create Release" in `CONTRIBUTING.md`. Copy the checklist into the release PR
 or milestone and tick the items there.
 
+There are two scopes:
+- **Patch scope** (patch releases, vX.Y.Z with only Z changed): the section
+  "Required for every release".
+- **Full scope** (minor and major releases): both required sections.
+
 ## Required for every release
 
 **Tests and checks**
@@ -13,15 +18,21 @@ or milestone and tick the items there.
 - [ ] `devtools::test()` passes.
 - [ ] `devtools::check()` passes with no new warnings or notes.
 - [ ] Results are reproduced against the previous release: manually with
-      `dev/manual_test_scripts/` up to v1.3.1, with the pipeline tests from
+      `dev/manual_test_scripts/` up to v1.3.x, with the pipeline tests from
       v1.4.0 on (see roadmap, WP 2.2).
+
+**Release notes and version**
+- [ ] `NEWS.md` lists all user-facing changes of this release.
+- [ ] Version number is updated in `DESCRIPTION` and `CITATION` and matches
+      the `NEWS.md` heading and the planned tag.
+
+## Also required for minor and major releases
 
 **User-facing documentation** (done by a team member)
 - [ ] Every vignette in `vignettes/` is still up to date and relevant: code
       runs with the current version, described behaviour and output match,
       and vignettes about outdated workflows are revised or removed.
 - [ ] `README.md` and the installation instructions are up to date.
-- [ ] `NEWS.md` lists all user-facing changes of this release.
 
 **Documentation in sync with code** (done by Claude)
 - [ ] Claude checks that all package documentation is in sync with the code:
@@ -38,9 +49,9 @@ Proposals to accept or reject. Accepted items move into the required section.
 ### Every release
 - [ ] `NEWS.md` covers every PR merged since the last tag
       (`git log <last tag>..HEAD`), and each entry is under the right version.
-- [ ] Version number is the same in `DESCRIPTION`, `CITATION`, the `NEWS.md`
-      heading and the planned tag, and the bump matches the kind of change
-      (patch, minor, major) described in `CONTRIBUTING.md`.
+- [ ] The version bump matches the kind of change (patch, minor, major)
+      described in `CONTRIBUTING.md`; a patch release contains no new
+      features.
 - [ ] Changed defaults and changed output are listed in `NEWS.md` even if the
       function signature did not change.
 - [ ] No leftover debugging code in `R/`: `browser()`, `print()` used for
