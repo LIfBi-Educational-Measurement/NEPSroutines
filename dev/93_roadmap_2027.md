@@ -173,6 +173,8 @@ Status: planned
 Status: planned
 
 - #162 data preparation in the example scripts (j-welling is working on it)
+- #185 how to prepare the school variable, in the `prepare_data` vignette
+  and the example scripts `dat1` and `dat2` (tgnambs)
 - #167 update README
 - #124 add SK and RS missing types (as decided)
 - #129 fix the `survey_paper.bib` template (as decided)
