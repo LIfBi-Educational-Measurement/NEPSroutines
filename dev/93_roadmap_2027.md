@@ -45,6 +45,9 @@ fixtures it breaks, and the systematic fixture work follows in WP 2.1.
 - #154 sum-0 cell in `steps_analysis()` ignores `digits`
 - #152 (fix part) `TblCode()` `tam.fit()` mismatch; regenerating the stale
   ex2 fixtures is WP 2.1
+- #177 printed IRT summary still says "within dichotomous items" for the
+  percentage of correct responses, which also covers polytomous items since
+  v1.3.0
 
 **Release v1.3.1** (2027-01-29 to 2027-02-05)
 - Ships the report output fixes from WP 1.1 early, because they affect the
