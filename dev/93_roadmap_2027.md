@@ -63,7 +63,7 @@ fixtures it breaks, and the systematic fixture work follows in WP 2.1.
 - #139 DIF with factor variables
 
 **WP 1.3: Docs, housekeeping, open decisions** (due 2027-03-12)
-- #162 data preparation in the example scripts
+- #162 data preparation in the example scripts (j-welling is working on it)
 - #167 update README
 - #124 add SK and RS missing types (needs a domain answer first)
 - #129 review `survey_paper.bib` template (needs a domain answer first)
@@ -78,7 +78,7 @@ fixtures it breaks, and the systematic fixture work follows in WP 2.1.
   Results are still compared manually with `dev/manual_test_scripts/`; this
   is the last planned release that does so.
 
-## Q2 2027: v1.4.0 (minor: tests, then non-breaking groundwork)
+## Q2 2027: v1.4.0 (minor: tests, then non-breaking features)
 
 Old `.rds` results must still render; existing exported functions keep working.
 Tests come first so the feature work in WP 2.3 and 2.4 is covered by them.
@@ -111,8 +111,7 @@ so it no longer has to be run by hand before each release.
   2.4 has not reached `main`, so a release can still be made from `main`
   without a separate release branch.
 
-**WP 2.3: Result objects and reporting** (due 2027-05-28)
-- #119 lightweight S3 class layer for result objects (groundwork for #120)
+**WP 2.3: Reporting and output** (due 2027-05-28)
 - #112 reimplement `wright_map()` with ggplot2, drop WrightMap dependency
 - #117 vector graphics output for plots
 - #116 add `item` argument to `GetMvi()`
@@ -125,7 +124,6 @@ so it no longer has to be run by hand before each release.
 **Decisions to settle in WP 1.3**
 - #117: opt-in `device` argument or new default output format
 - #74: warning, `strict` parameter, or keep the error
-- #119: which parts land in 1.4.0
 
 **Release v1.4.0** (2027-06-18 to 2027-06-30)
 - Run the full [release checklist](94_release_checklist.md), with the pipeline
@@ -133,8 +131,11 @@ so it no longer has to be run by hand before each release.
 
 ## Q3 2027 and later (to be decided)
 
-Not yet planned: releases, versions and dates are decided later.
+Not yet planned: releases, versions and dates are decided later. All
+restructuring of the package (such as #119) comes after Q2.
 
+- #119 lightweight S3 class layer for result objects (groundwork for #11 and
+  #120)
 - #61 automatic detection of needed missing values
 - #96 kernel smoothing for ICC curves
 - #11 linking support (after #119)
