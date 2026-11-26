@@ -315,3 +315,9 @@ restructuring of the package (such as #119) comes after July 2027.
   `.tiff` files (no re-fitting). This would remove the kind of fixture drift
   behind #158 and #152, but it changes the shipped template, so it belongs in
   a major version. No issue yet.
+- #188 store unrounded numbers in the `.xlsx` output and round once, at
+  display time, in the `Tbl*()` functions. This removes double rounding and
+  parsing numbers back out of text (worked around in #187 and #190). It
+  changes the saved output format, so it needs a decision with the
+  co-authors first. Placed here provisionally; it is closely related to the
+  report template item above.
