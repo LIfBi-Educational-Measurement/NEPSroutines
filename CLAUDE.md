@@ -4,7 +4,10 @@
 
 Always work on a git worktree, not the main repository.
 
-1. **Spec** - Understand the task and read relevant code first
+1. **Spec** - Understand the task and read relevant code first. Write down
+   the success criteria: what must be true in the actual output (rendered
+   report, printed table, image, returned object) for the change to work,
+   not just in the code.
 2. **Plan** - Use plan mode to design the approach
 3. **Draft** - Implement the changes
 4. **Simplify** - Review and simplify the solution
@@ -14,11 +17,25 @@ Always work on a git worktree, not the main repository.
      defaults or output) must also be carried over into the affected
      vignette(s) in `vignettes/`
 7. **Test** - Run `devtools::test()`
-8. **Verify** - Run `devtools::check(args = "--no-tests")` (skip tests since already run)
+8. **Verify behaviour** - Check each success criterion against real output
+   (run the generated code, render, inspect the result). Use only example or
+   simulated data, such as `tests/testthat/fixtures/` or the package's
+   example data, never real NEPS data. Not every check needs to become a
+   test. Report which criteria were verified and which were not.
+9. **Check** - Run `devtools::check(args = "--no-tests")` (skip tests since already run)
    - Ignorable pre-existing warnings: vignette warnings (Pandoc not installed locally); timestamp NOTE
-9. **Quality Check** - Use a subagent to verify code quality and safety
-10. **Commit & PR** - Commit changes and create a pull request
-11 ** Learnings** - If problems occurred, note mistakes to avoid into /dev/01_claude_reference.md
+10. **Review** - An independent subagent reviews the change. Give it the
+    task, the success criteria and the diff, not your own conclusions. It
+    checks:
+    - Success criteria: met, re-checked independently where feasible
+    - Correctness: bugs, edge cases, other places with the same problem
+    - Simplicity: no unnecessary verbosity, duplication or
+      over-engineering; reasonably efficient
+    - Safety: no secrets, absolute paths or real NEPS data
+11. **Commit & PR** - Commit changes and create a pull request. The PR
+    description lists the success criteria and how each was verified.
+12. **Learnings** - If problems occurred, note mistakes to avoid in
+    `dev/01_claude_reference.md`
 
 ## Quick Commands
 
