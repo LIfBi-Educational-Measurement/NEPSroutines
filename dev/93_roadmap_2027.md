@@ -54,8 +54,9 @@ plan is therefore limited by review time and by decisions, not by coding time.
 
 - One issue per PR. Small fixes in the same work package may share one PR.
 - Before a PR goes to review, the agent runs `devtools::test()`,
-  `devtools::check()` and, once it exists (WP 2.1), the lint check, and has
-  the code checked by a quality-check subagent (see `CLAUDE.md`).
+  `devtools::check()` and, once it exists (WP 2.1), the lint check, verifies
+  the success criteria against real output, and has the change checked by an
+  independent review subagent (see `CLAUDE.md`).
 - The PR description says what the reviewer has to check by hand, for example
   a plot comparison or a changed value in a table.
 - A PR that regenerates fixtures summarises which values changed, instead of
