@@ -725,6 +725,8 @@ test_that("TblCode() works", {
   expect_true(any(grepl("^# polytomous items$", code)))
   expect_true(any(grepl("TAM::tam.mml\\(resp = dat\\[, items\\], Q = Q", code)))
   expect_true(any(grepl('irtmodel = "PCM2"', code, fixed = TRUE)))
+  expect_true(any(code == "TAM::msq.itemfit(mod)"))
+  expect_false(any(grepl("tam.fit", code, fixed = TRUE)))
   expect_equal(tail(code, 1), "TAM::tam.wle(mod)")
 
 })

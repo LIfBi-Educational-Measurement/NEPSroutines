@@ -1470,7 +1470,7 @@ TblCode <- function(vars, select, collapsed = NULL, tbl = TRUE,
     'summary(mod)',
     '',
     '# item fit',
-    'TAM::tam.fit(mod)',
+    'TAM::msq.itemfit(mod)',
     '',
     '# WLE',
     'TAM::tam.wle(mod)'

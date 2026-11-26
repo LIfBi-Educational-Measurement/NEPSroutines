@@ -51,7 +51,8 @@ information criteria such as AIC and BIC are again used.
 These analyses can take a very long time in R (several hours), so it is
 recommended to run them on a particularly powerful computer.
 Multidimensional analyses are especially computationally demanding;
-therefore, instead of quadrature methods, Monte Carlo methods are used.
+therefore, instead of quadrature methods, quasi-Monte Carlo integration is used.
+Its nodes are deterministic, so repeated runs give identical results.
 For trial runs of the syntax, `snodes = 10` can be used initially, but
 for final estimation a higher number should be selected (default
 `snodes = 5000`).
