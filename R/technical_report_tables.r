@@ -1462,7 +1462,7 @@ TblCode <- function(vars, select, collapsed = NULL, tbl = TRUE,
       txt,
       '# estimate Rasch model',
       paste0('mod <- TAM::tam.mml(resp = dat[, items], ',
-             'irtmodel = "PCM2", pid = dat$ID_t)')
+             'irtmodel = "1PL", pid = dat$ID_t)')
     )
   }
   txt <- c(
