@@ -124,6 +124,8 @@ Status: planned
 - #131 Wright map footnote hardcodes "Table 5"
 - #142 `TblCode()` does not define the Rasch model
 - #154 sum-0 cell in `steps_analysis()` ignores `digits`
+- #189 `TblDif()` and `TblCode()` misread numbers of 10 or more (found in
+  the audit after #154)
 - #152 `TblCode()` `tam.fit()` mismatch, plus the "Monte Carlo" wording in
   `vignettes/dimensionality_analyses.Rmd`; regenerating the stale ex2
   fixtures is split out as #179 (WP 2.1)
