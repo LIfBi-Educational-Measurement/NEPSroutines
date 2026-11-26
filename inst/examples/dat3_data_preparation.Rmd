@@ -1,0 +1,618 @@
+---
+title: "Example Script of Data Preparation for dat3"
+author: "Rachael Kyalo & Jana Welling"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    number_sections: true
+    toc_float: true
+    theme: readable
+    highlight: tango
+    df_print: paged
+    code_folding: show
+editor_options:
+  chunk_output_type: console
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(error = FALSE)
+```
+
+# Introduction
+
+This example shows how to prepare `resp` and `vars` from the simulated data example `dat3` for analysis with NEPSroutines.
+As described in `?dat3`, the simulated data represents a test with 16
+dichotomous items and five polytomous items presented in three booklets.
+The `dat3` naming convention for items is `reg7` followed by four digits for a raw response.
+As in all NEPS tests, scored item names end in `_c` and polytomous item names contain `s`.
+
+In practice, all necessary information for `vars` (e.g., item names, item type, position, correct response) come from the test specification (usually the Codebook). All raw item responses and socio-demographic variables needed for `resp` can be found in the test and survey data, respectively.  See vignette `import_data` for more information.
+
+The sections below explain how to score the responses and prepare the variables needed for analysis.
+
+# Set up
+
+## Prepare R
+
+Install the latest official release using the instructions in the
+[README](https://github.com/LIfBi-Educational-Measurement/NEPSroutines#installation).
+Run these installation commands once in the R console;
+they are not run automatically when knitting this document. 
+
+```r
+# Install pak first if it is not already installed.
+install.packages("pak")
+
+# Install a fixed release, rather than the development version.
+pak::pak("LIfBi-Educational-Measurement/NEPSroutines@vX.Y.Z")
+```
+
+Replace `vX.Y.Z` with the correct tag for the latest release from the
+[Releases page](https://github.com/LIfBi-Educational-Measurement/NEPSroutines/releases).
+Keep the chosen tag in your script to record which release you used.
+Restart R after updating a package that was already loaded.
+
+```{r prepare-r, message=FALSE}
+# Load the installed package for this R session.
+library(NEPSroutines)
+```
+
+## Create resp and vars
+
+Usually, the necessary data must be imported from the survey and test data as well as the codebook. Using the information from these data, `resp` and `vars` need to be created. See vignette `import_data` for more information on the required data.
+
+Since the simulated example data already contains `resp` and `vars` with all necessary variables, in this script, we simply load `dat1` and extract `resp` and `vars` from it. All variables that are usually not included in the raw data (e.g., scored items) are removed from the simulated data to create conditions that are normally found after data import.
+
+Read `help("dat3", package = "NEPSroutines")` for information on the data and included variables.
+
+```{r prepare-data}
+# Load the example dataset included in the package.
+data("dat3", package = "NEPSroutines")
+
+# Keep the raw-item rows and the information supplied by the test specification.
+# Raw item names have no "_c" scoring suffix.
+raw_rows <- !grepl("_c$", dat3$vars$item)
+raw_variables <- c(
+  "item", "type", "texttype", "pos_easy", "pos_medium",
+  "pos_difficult", "correct"
+)
+vars <- dat3$vars[raw_rows, raw_variables]
+rownames(vars) <- NULL
+
+# Keep source demographic variables and raw item responses in resp.
+raw_variables <- c(
+  "ID_t", "sex", "booklet", "rotation", "t34005a", "t400500",
+  "testy", "testm", "birthy", "birthm", vars$item
+)
+resp <- dat3$resp[, raw_variables]
+rm(raw_rows, raw_variables)
+
+# Dat3 has 40 raw response columns, including subitems of complex items.
+# Check that vars contains one row for each of these 40 responses
+# and that every row has an answer key in the correct column.
+# stopifnot() stops if either check fails
+stopifnot(nrow(vars) == 40, !anyNA(vars$correct))
+```
+
+## Set up vars
+
+Every item is currently unscored. Therefore, the variable `raw` is set to TRUE and the variables `dich` (as standing for dichotomously scored) and `poly` (as standing for polytomously scored) to FALSE for all items.
+
+```{r vars set up}
+
+vars$raw <- TRUE
+vars$dich <- FALSE
+vars$poly <- FALSE
+
+```
+
+# Prepare resp
+
+`resp` contains all competence and socio-demographic data.
+
+## Prepare competence data
+
+In this section, user-defined missing values are set, the raw items are
+scored (separately for dichotomous and polytomous items), and sparse
+response categories combined. Valid cases are identified after defining
+the final analysis item set in the section "Prepare vars".
+
+### Define existing user-defined missing values
+
+Dat3 uses `-54` for items not included in a participant's booklet.
+These responses are missing by design and must not be imputed as if
+the participant had been given those items.
+
+Negative numbers identify different reasons for a missing response.
+First count these codes, then give them short names and labels for later
+analyses. Inspect only item responses. Some raw items use letters for
+answer options, so their negative missing codes are stored as text.
+`unlist()` gathers the responses into one vector; the pattern below
+selects a minus sign followed by digits. Ordinary R missing values (`NA`)
+are excluded from this count, but handled when defining valid cases.
+
+```{r user-defined-missing-values}
+
+# Get all user-defined missing values from item responses
+raw_values <- unlist(resp[, vars$item], use.names = FALSE)
+raw_missing <- raw_values[!is.na(raw_values) & grepl("^-[0-9]+$", raw_values)]
+table(raw_missing)
+
+# Create named numeric vector with all user-defined missing values
+mvs <- c(OM = -97, NV = -95, NR = -94, NP = -56, ND = -55, MD = -54)
+
+# Create named character vector with labels for all user-defined missing values
+labels_mvs <- c(
+  ALL = "total missing items",
+  OM = "omitted items", 
+  NV = "not valid items", 
+  NR = "not reached items", 
+  NP = "not participated",
+  ND = "not determinable items",
+  MD = "items missing by design"
+)
+
+# Check if all missing values are included in variable 'mvs' 
+stopifnot(all(as.numeric(raw_missing) %in% mvs))
+
+```
+
+### Dichotomous scoring
+
+`old_names` identifies the original response columns. The answer key is
+in `vars$correct`; semicolons separate multiple acceptable answers. The
+function creates `_c` columns: correct = 1, incorrect = 0, with negative
+missing codes preserved. Each new response column also needs a row in
+`vars`.
+
+```{r dichotomous-scoring}
+
+# Get item names from raw items
+item_names <- vars$item[vars$raw]
+
+# Score dichotomous items
+resp <- NEPSroutines::dichotomous_scoring(
+  resp,
+  vars,
+  old_names = item_names,
+  correct = "correct"
+)
+
+# Include information on scored items in vars
+vars <- NEPSroutines::duplicate_items(
+  vars,
+  old_names = item_names,
+  new_names = paste0(item_names, "_c"),
+  change = list(raw = FALSE, dich = TRUE, correct = NA_character_)
+)
+
+```
+
+### Polytomous scoring
+
+Each named list element links a combined item to its scored subitems.
+The combined score counts correct subitems. Eligible missing subitems
+are imputed internally with the package's default procedure; returned
+subitem columns retain the original missing codes. A fixed seed makes
+this example reproducible. Imputation reports are saved under `Results`
+and `Tables`.
+
+```{r polytomous-scoring}
+
+# Create list that defines the name and all subitems for each polytomous item
+poly_items <- list(
+  reg7005s_c = paste0("reg7005", 1:5, "_c"),
+  reg7009s_c = paste0("reg7009", 1:5, "_c"),
+  reg7016s_c = paste0("reg7016", 1:6, "_c"),
+  reg7019s_c = paste0("reg7019", 1:4, "_c"),
+  reg7021s_c = paste0("reg7021", 1:4, "_c")
+)
+# Score polytomous items
+set.seed(20260907)
+resp <- NEPSroutines::pc_scoring(
+  resp,
+  poly_items = poly_items,
+  vars = vars,
+  select = "dich",
+  mvs = mvs,
+  missing_by_design = -54,
+  impute = TRUE,
+  threshold = 0.5
+)
+
+# Include information on scored items in vars
+vars <- NEPSroutines::duplicate_items(
+  vars,
+  old_names = c(
+    "reg70051_c", "reg70091_c", "reg70161_c", "reg70191_c", "reg70211_c"
+  ),
+  new_names = names(poly_items),
+  change = list(
+    raw = FALSE,
+    dich = FALSE,
+    poly = TRUE,
+    type = "CMC",
+    correct = NA_character_
+  )
+)
+```
+
+### Inspect sparse categories for polytomous items
+
+Following the preparation vignette (`prepare_data`), collapse polytomous
+response categories with fewer than 200 responses using
+`collapse_response_categories()`. Register the resulting item columns in
+`vars` and use those replacements in `mixed`. Keep the original,
+uncollapsed items for sum scores and release (`suf`).
+
+**An exception requiring a scoring decision:** `reg7016s_c` has only
+358 valid responses in this release. It is impossible to divide these
+into two categories with at least 200 observations each, so the automatic
+function leaves this item unchanged. Following the vignette's manual
+handling step, this example combines scores 0--2 into 0 and scores 3--6
+into 1 (fewer than half versus at least half of its six subitems correct).
+The resulting counts are 171 and 187. This is an illustrative manual
+rule, not an established scoring key: both categories remain below 200.
+
+```{r sparse-categories}
+
+# Show a frequency table for each combined item, including empty categories.
+# Negative missing codes are not response categories.
+for (item in names(poly_items)) {
+  cat("\nItem:", item, "\n")
+  responses <- resp[[item]]
+  valid_responses <- responses[!is.na(responses) & responses >= 0]
+  possible_scores <- 0:length(poly_items[[item]])
+  print(table(factor(valid_responses, levels = possible_scores)))
+}
+
+# Collapse categories with fewer than 200 responses.
+names_before_collapsing <- names(resp)
+resp <- NEPSroutines::collapse_response_categories(
+  resp,
+  vars,
+  select = "poly",
+  per_cat = 200
+)
+
+# The automatic procedure cannot retain two categories with 200 responses
+# for reg7016s_c. Manually combine 0-2 versus 3-6 correct subitems.
+# Start with a copy so missing codes and NA remain unchanged.
+resp$reg7016s_c_collapsed <- resp$reg7016s_c
+resp$reg7016s_c_collapsed[resp$reg7016s_c %in% 0:2] <- 0
+resp$reg7016s_c_collapsed[resp$reg7016s_c %in% 3:6] <- 1
+
+# Show the manual result, excluding missing codes.
+table(resp$reg7016s_c_collapsed[resp$reg7016s_c_collapsed >= 0])
+# setdiff() identifies the new columns added by the function.
+# Removing "_collapsed" gives the names of their original versions.
+collapsed_items <- setdiff(names(resp), names_before_collapsing)
+original_items <- sub("_collapsed$", "", collapsed_items)
+
+# Add metadata rows only if the function created collapsed versions.
+if (length(collapsed_items) > 0) {
+  vars <- NEPSroutines::duplicate_items(
+    vars,
+    old_names = original_items,
+    new_names = collapsed_items
+  )
+}
+```
+
+## Prepare socio-demographic variables
+
+Prepare age, migration background and number of books. Sex and rotation
+are already binary. 
+
+Migration is reconstructed from `t400500` and books from `t34005a`.
+Age is calculated from test date (year, month) and birth date (year, month, day).
+For more information (e.g., rules on dichotomization), see vignette `prepare_data`.
+
+```{r socio-demographic-variables}
+
+# Calculate age from birth and test date
+resp$age <- NEPSroutines::calculate_age(
+  resp,
+  birth_year = "birthy",
+  birth_month = "birthm",
+  test_year = "testy",
+  test_month = "testm"
+)
+
+# Check the input categories used for migration and books in this example.
+# Missing values (NA) are allowed.
+stopifnot(
+  all(is.na(resp$t400500) | resp$t400500 %in% 0:10),
+  all(is.na(resp$t34005a) | resp$t34005a %in% 1:6)
+)
+
+# Create binary migration background variable
+resp$mig <- ifelse(
+  resp$t400500 %in% c(0, 4:10),
+  0,
+  ifelse(is.na(resp$t400500), NA, 1)
+)
+
+# Create binary books variable 
+resp$books <- ifelse(
+  is.na(resp$t34005a),
+  NA_integer_,
+  as.integer(resp$t34005a %in% 4:6)
+)
+
+# Create labels for binary socio-demographic variables
+attr(resp$mig, "labels") <- 
+  c(no_migration_background = 0, migration_background = 1)
+attr(resp$books, "labels") <- 
+  c(lower_book_category = 0, higher_book_category = 1)
+attr(resp$rotation, "labels") <- c(first = 0, second = 1)
+
+```
+
+Sex is already coded 0/1 and does not need recoding.
+
+Age is continuous; no median split is needed by this scaling example.
+`rotation` is already binary.
+
+## Prepare booklet variables
+
+Participants received an easy, medium or difficult booklet. In the
+actual release data, `booklet` contains these names. Keep all three
+categories, and create a TRUE/FALSE flag for each group. These flags
+identify participants; later we create matching flags for items.
+
+```{r prepare-booklets}
+# Check booklet names before defining the groups.
+stopifnot(!anyNA(resp$booklet))
+stopifnot(all(resp$booklet %in% c("easy", "medium", "difficult")))
+
+# Identify participants who received each booklet.
+resp$easy <- resp$booklet == "easy"
+resp$medium <- resp$booklet == "medium"
+resp$difficult <- resp$booklet == "difficult"
+
+# All participants received the items common to the three booklets.
+resp$common <- TRUE
+table(resp$booklet, useNA = "ifany")
+```
+
+# Prepare vars
+
+## Define analysis item sets and scoring information
+
+`dich` identifies the 40 scored individual responses. `mixed` selects
+the 16 standalone items and five combined polytomous items, using
+collapsed versions where created. Their individual subitems are not
+selected in `mixed`, to avoid counting the same task twice.
+
+```{r prepare-vars}
+# Select standalone scored items and combined polytomous items.
+vars$mixed <- vars$poly | (vars$dich & !vars$item %in% unlist(poly_items))
+
+# Use each collapsed version instead of its original version in analyses.
+vars$mixed[vars$item %in% original_items] <- FALSE
+
+# Set item weights: 1 for binary scores and 0.5 for scores above 1.
+vars$scoring <- 1
+for (item in vars$item[vars$poly]) {
+  vars$scoring[vars$item == item] <-
+    if (max(resp[[item]], na.rm = TRUE) > 1) 0.5 else 1
+}
+
+# Store the maximum possible score, not the count of response categories.
+vars$num_cat <- 1
+for (item in names(poly_items)) {
+  vars$num_cat[vars$item == item] <- length(poly_items[[item]])
+}
+for (item in collapsed_items) {
+  vars$num_cat[vars$item == item] <- max(resp[[item]], na.rm = TRUE)
+}
+
+# Use original uncollapsed scores for sum scores and release.
+vars$suf <- vars$mixed
+vars$suf[vars$item %in% original_items] <- TRUE
+vars$suf[vars$item %in% collapsed_items] <- FALSE
+
+# Select raw multiple-choice items for distractor analysis.
+vars$distan <- vars$raw & vars$type == "MC"
+
+# Check the overall numbers of raw responses, scored responses and final items.
+stopifnot(sum(vars$raw) == 40, sum(vars$dich) == 40, sum(vars$mixed) == 21)
+knitr::kable(vars[vars$mixed, c("item", "type", "texttype", "scoring", "num_cat")])
+```
+
+## Create item selections for each booklet
+
+The positions come from the test specification. A missing position means
+that an item was not included in that booklet. New scored and combined
+items inherit this information from their raw items or first subitem.
+Use these positions to create item-membership flags rather than copying
+the prepared flags from the example dataset.
+
+```{r item-groups}
+# Identify which items belong to each booklet.
+vars$easy <- !is.na(vars$pos_easy)
+vars$medium <- !is.na(vars$pos_medium)
+vars$difficult <- !is.na(vars$pos_difficult)
+
+# Identify the items included in all three booklets.
+vars$common <- vars$easy & vars$medium & vars$difficult
+
+# Select individual scored responses for each booklet and the common set.
+vars$dich_easy <- vars$dich & vars$easy
+vars$dich_medium <- vars$dich & vars$medium
+vars$dich_difficult <- vars$dich & vars$difficult
+vars$dich_common <- vars$dich & vars$common
+
+# Select final analysis items, including collapsed replacements.
+vars$mixed_easy <- vars$mixed & vars$easy
+vars$mixed_medium <- vars$mixed & vars$medium
+vars$mixed_difficult <- vars$mixed & vars$difficult
+vars$mixed_common <- vars$mixed & vars$common
+
+# Select original scored items for booklet-specific sum scores and release.
+vars$suf_easy <- vars$suf & vars$easy
+vars$suf_medium <- vars$suf & vars$medium
+vars$suf_difficult <- vars$suf & vars$difficult
+vars$suf_common <- vars$suf & vars$common
+
+# Display the number of final items in each booklet and in the common set.
+colSums(vars[, c("mixed_easy", "mixed_medium", "mixed_difficult", "mixed_common")])
+```
+
+The final item positions already run consecutively within each booklet:
+1--10 for easy, 1--11 for medium and 1--10 for difficult. No renumbering
+is needed here. The following check confirms this. In another dataset
+with gaps after combining subitems, use the vignette's `pos_new()` step.
+
+```{r check-positions}
+stopifnot(
+  identical(sort(as.numeric(vars$pos_easy[vars$mixed_easy])), as.numeric(1:10)),
+  identical(sort(as.numeric(vars$pos_medium[vars$mixed_medium])), as.numeric(1:11)),
+  identical(sort(as.numeric(vars$pos_difficult[vars$mixed_difficult])), as.numeric(1:10)),
+  sum(vars$mixed_common) == 5
+)
+```
+
+## Define valid cases
+
+A valid case has at least three non-missing, valid responses in the
+mixed item set. Responses missing by design (`-54`) do not count. A score of zero counts as a valid response. Include `NA` explicitly because `min_val()` uses membership in `invalid` when that argument is supplied.
+
+```{r valid-cases}
+
+# Create variable indicating whether a person provided the minimum number of 
+# valid responses
+resp$valid <- NEPSroutines::min_val(
+  resp,
+  vars,
+  select = "mixed",
+  min.val = 3,
+  invalid = c(unname(mvs), NA_real_)
+)
+
+# Check new variable
+table(resp$valid, useNA = "ifany")
+
+```
+
+# Validation
+
+Check that the data have the columns and values required by the package.
+These checks use only the data we have prepared. If a check fails, R
+stops and reports the problem; otherwise, preparation continues.
+
+```{r check-data}
+
+# Check that each item name occurs only once in vars.
+NEPSroutines::check_items(vars$item)
+
+# Check that participant IDs are unique and are not missing.
+stopifnot(!anyNA(resp$ID_t))
+NEPSroutines::check_pid(resp$ID_t)
+
+# Check that the required item-information columns exist.
+NEPSroutines::check_variables(
+  vars, 
+  "vars", c("item", "type", "correct", "texttype", "pos_easy", "pos_medium", "pos_difficult")
+  )
+# Check that every item listed in vars has a response column in resp.
+NEPSroutines::check_variables(
+  resp, 
+  "resp", c("ID_t", vars$item)
+  )
+
+# Check that item-selection flags contain TRUE/FALSE, without missing values.
+NEPSroutines::check_logicals(
+  vars, 
+  "vars", c("raw", "dich", "poly", "mixed", "suf", "distan")
+  )
+# Check that every participant has a TRUE/FALSE valid-case flag.
+NEPSroutines::check_logicals(
+  resp, 
+  "resp", "valid")
+
+# Check that dichotomous scores are numeric and do not exceed 1.
+NEPSroutines::check_numerics(
+  resp,
+  "resp", vars$item[vars$dich], dich = TRUE)
+
+# Check that polytomous scores are numeric.
+NEPSroutines::check_numerics(
+  resp,
+  "resp", vars$item[vars$poly])
+
+# Check each scored item: allow declared missing codes, NA, or whole-number
+# scores between zero and the maximum possible score for that item.
+for (item in vars$item[vars$dich | vars$poly]) {
+  x <- resp[[item]]
+  stopifnot(all(
+    is.na(x) |
+      x %in% mvs |
+      (x >= 0 & x <= vars$num_cat[vars$item == item] & x == floor(x))
+  ))
+}
+
+```
+
+## Check booklet selections
+
+Confirm that every participant belongs to exactly one booklet and that
+items not administered in that booklet retain `-54`. For participants
+who did not take the test, `-56` is also allowed. No such response
+should become an ordinary score during scoring or collapsing.
+
+```{r check-booklet-data}
+# Participant membership must be TRUE/FALSE and identify exactly one booklet.
+NEPSroutines::check_logicals(
+  resp, "resp", c("easy", "medium", "difficult", "common")
+)
+stopifnot(all(rowSums(resp[, c("easy", "medium", "difficult")]) == 1))
+
+# Check item membership and the analysis selections for each group.
+NEPSroutines::check_logicals(
+  vars, "vars", c(
+    "easy", "medium", "difficult", "common",
+    "dich_easy", "dich_medium", "dich_difficult", "dich_common",
+    "mixed_easy", "mixed_medium", "mixed_difficult", "mixed_common",
+    "suf_easy", "suf_medium", "suf_difficult", "suf_common"
+  )
+)
+
+# Check that responses to unadministered items have not been scored as 0 or 1.
+for (group in c("easy", "medium", "difficult")) {
+  absent_items <- vars$item[!vars[[group]] & (vars$dich | vars$poly)]
+  absent_responses <- unlist(resp[resp[[group]], absent_items], use.names = FALSE)
+  stopifnot(all(absent_responses %in% c(-54, -56)))
+}
+```
+
+# Save data
+
+Keep both raw and scored item columns because the scaling example also
+performs distractor analyses. Keep socio-demographic variables and valid-case status because
+subsequent analyses use them. The saved objects can replace the
+data-loading step in the scaling example.
+
+```{r save-data}
+save(resp, vars, mvs, labels_mvs, file = "dat3_scored.Rdata")
+```
+
+# Load data
+
+In a separate scaling script, you can load the prepared data using:
+
+```r
+load("dat3_scored.Rdata")
+```
+
+# Session
+
+This code provides information on the R session, e.g., the current version of loaded packages. It is important for the reproducibility of the scaling procedure.
+
+```{r session-info}
+sessionInfo()
+```
