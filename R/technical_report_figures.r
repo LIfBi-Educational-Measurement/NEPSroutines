@@ -166,7 +166,12 @@ FigMV <- FigMv
 #' Crop plot with Wright map and include footnote
 #'
 #' @param file A file path for the image.
-#' @param tbl The table number for the footnote.
+#' @param tbl The number of the item-parameter table that the footnote
+#' refers to. The footnote is drawn into the image, so Quarto cannot
+#' update this number; set it to match the table numbering of your report.
+#' The report template of [Setup()] passes the number for its domain;
+#' reports created with an earlier version of the template use the default
+#' of 5, which is wrong for mathematics and digital competence.
 #' @param crop A string indicating how to crop the image in the format
 #' `"<width>x<height>{+-}<xoffset>{+-}<yoffset>"`
 #' (see http://www.imagemagick.org/Magick++/Geometry.html)
