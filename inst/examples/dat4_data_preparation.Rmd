@@ -1,0 +1,570 @@
+---
+title: "Example Script of Data Preparation for dat4"
+author: "Rachael Kyalo & Jana Welling"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    number_sections: true
+    toc_float: true
+    theme: readable
+    highlight: tango
+    df_print: paged
+    code_folding: show
+editor_options:
+  chunk_output_type: console
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(error = FALSE)
+```
+
+# Introduction
+
+This example shows how to prepare `resp` and `vars` from the simulated data example `dat4` for analysis with NEPSroutines.
+As described in `?dat4`, the simulated data represents a multi-stage test with 
+26 dichotomous items and eight polytomous items presented in three stages.
+The `dat4` naming convention for items is `sca14` followed by four digits for a raw response.
+As in all NEPS tests, scored item names end in `_c` and polytomous item names contain `s`.
+
+In practice, all necessary information for `vars` (e.g., item names, item type, position, correct response) come from the test specification (usually the Codebook). All raw item responses and socio-demographic variables needed for `resp` can be found in the test and survey data, respectively.  See vignette `import_data` for more information.
+
+The sections below explain how to score the responses and prepare the variables needed for analysis.
+
+# Set up
+
+## Prepare R
+
+Install the latest official release using the instructions in the
+[README](https://github.com/LIfBi-Educational-Measurement/NEPSroutines#installation).
+Run installation commands once in the R console;
+they are not run automatically when knitting this document. 
+
+```r
+# Install pak first if it is not already installed.
+install.packages("pak")
+
+# Install a fixed release, rather than the development version.
+pak::pak("LIfBi-Educational-Measurement/NEPSroutines@vX.Y.Z")
+```
+
+Replace `vX.Y.Z` with the correct tag for the latest release from the
+[Releases page](https://github.com/LIfBi-Educational-Measurement/NEPSroutines/releases).
+Keep the chosen tag in your script to record which release you used.
+Restart R after updating a package that was already loaded.
+
+```{r prepare-r, message=FALSE}
+# Load the installed package for this R session.
+library(NEPSroutines)
+```
+
+## Create resp and vars
+
+Usually, the necessary data must be imported from the survey and test data as well as the codebook. Using the information from these data, `resp` and `vars` need to be created. See vignette `import_data` for more information on the required data.
+
+Since the simulated example data already contains `resp` and `vars` with all necessary variables, in this script, we simply load `dat1` and extract `resp` and `vars` from it. All variables that are usually not included in the raw data (e.g., scored items) are removed from the simulated data to create conditions that are normally found after data import.
+
+Read `help("dat4", package = "NEPSroutines")` for information on the data and included variables.
+
+```{r prepare-data}
+# Load the example dataset included in the package.
+data("dat4", package = "NEPSroutines")
+
+# Keep the raw-item rows and the information supplied by the test specification.
+# Raw item names have no "_c" scoring suffix.
+raw_rows <- !grepl("_c$", dat4$vars$item)
+raw_variables <- c(
+  "item", "type", "component", "pos", "correct", "level1", "level2", "level3"
+)
+vars <- dat4$vars[raw_rows, raw_variables]
+rownames(vars) <- NULL
+
+# Keep source demographic variables and raw item responses in resp.
+raw_variables <- c(
+  "ID_t", "sex", "rotation", "t34005a", "t400500",
+  "testy", "testm", "birthy", "birthm", vars$item
+)
+resp <- dat4$resp[, raw_variables]
+rm(raw_rows, raw_variables)
+
+# Dat4 has 60 raw response columns, including subitems of complex items.
+# Check that vars contains one row for each of these 60 responses
+# and that every row has an answer key in the correct column.
+# stopifnot() stops if either check fails
+stopifnot(nrow(vars) == 60, !anyNA(vars$correct))
+```
+
+## Set up vars
+
+Every item is currently unscored. Therefore, the variable `raw` is set to TRUE and the variables `dich` (as standing for dichotomously scored) and `poly` (as standing for polytomously scored) to FALSE for all items.
+
+```{r vars set up}
+
+vars$raw <- TRUE
+vars$dich <- FALSE
+vars$poly <- FALSE
+
+```
+
+# Prepare resp
+
+`resp` contains all competence and socio-demographic data.
+
+## Prepare competence data
+
+In this section, user-defined missing values are set, the raw items are
+scored (separately for dichotomous and polytomous items), and sparse
+response categories combined. Valid cases are identified after defining
+the final analysis item set in the section "Prepare vars".
+
+### Define existing user-defined missing values
+
+Items not administered along a participant's test route have code `-54`.
+This missing-by-design code must remain distinct from incorrect answers
+and from omitted responses.
+
+Negative numbers identify different reasons for a missing response.
+First count these codes, then give them short names and labels for later
+analyses. Inspect only item responses. Some raw items use letters for
+answer options, so their negative missing codes are stored as text.
+`unlist()` gathers the responses into one vector; the pattern below
+selects a minus sign followed by digits. Ordinary R missing values (`NA`)
+are excluded from this count, but handled when defining valid cases.
+
+```{r user-defined-missing-values}
+
+# Get all user-defined missing values from item responses
+raw_values <- unlist(resp[, vars$item], use.names = FALSE)
+raw_missing <- raw_values[!is.na(raw_values) & grepl("^-[0-9]+$", raw_values)]
+table(raw_missing)
+
+# Create named numeric vector with all user-defined missing values
+mvs <- c(OM = -97, NV = -95, NR = -94, NP = -56, ND = -55, MD = -54)
+
+# Create named character vector with labels for all user-defined missing values
+labels_mvs <- c(
+  ALL = "total missing items",
+  OM = "omitted items", 
+  NV = "not valid items", 
+  NR = "not reached items", 
+  NP = "not participated",
+  ND = "not determinable items",
+  MD = "items missing by design"
+)
+
+# Check if all missing values are included in variable 'mvs' 
+stopifnot(all(as.numeric(raw_missing) %in% mvs))
+
+```
+
+### Dichotomous scoring
+
+`old_names` identifies the original response columns. The answer key is
+in `vars$correct`; semicolons separate multiple acceptable answers. The
+function creates `_c` columns: correct = 1, incorrect = 0, with negative
+missing codes preserved. Each new response column also needs a row in
+`vars`.
+
+```{r dichotomous-scoring}
+
+# Get item names from raw items
+item_names <- vars$item[vars$raw]
+
+# Score dichotomous items
+resp <- NEPSroutines::dichotomous_scoring(
+  resp,
+  vars,
+  old_names = item_names,
+  correct = "correct"
+)
+
+# Include information on scored items in vars
+vars <- NEPSroutines::duplicate_items(
+  vars,
+  old_names = item_names,
+  new_names = paste0(item_names, "_c"),
+  change = list(raw = FALSE, dich = TRUE, correct = NA_character_)
+)
+
+```
+
+### Polytomous scoring
+
+Each named list element links a combined item to its scored subitems.
+The combined score counts correct subitems. Eligible missing subitems
+are imputed internally with the package's default procedure; returned
+subitem columns retain the original missing codes. A fixed seed makes
+this example reproducible. Imputation reports are saved under `Results`
+and `Tables`.
+
+```{r polytomous-scoring}
+
+# Create list that defines the name and all subitems for each polytomous item
+poly_items <- list(
+  sca14002s_c = paste0("sca14002", 1:5, "_c"),
+  sca14003s_c = paste0("sca14003", 1:3, "_c"),
+  sca14011s_c = paste0("sca14011", 1:3, "_c"),
+  sca14013s_c = paste0("sca14013", 1:3, "_c"),
+  sca14016s_c = paste0("sca14016", 1:3, "_c"),
+  sca14020s_c = paste0("sca14020", 1:5, "_c"),
+  sca14028s_c = paste0("sca14028", 1:6, "_c"),
+  sca14034s_c = paste0("sca14034", 1:6, "_c")
+)
+# Score polytomous items
+set.seed(20260907)
+resp <- NEPSroutines::pc_scoring(
+  resp,
+  poly_items = poly_items,
+  vars = vars,
+  select = "dich",
+  mvs = mvs,
+  missing_by_design = -54,
+  impute = TRUE,
+  threshold = 0.5
+)
+
+# Include information on scored items in vars
+vars <- NEPSroutines::duplicate_items(
+  vars,
+  old_names = c(
+    "sca140021_c", "sca140031_c", "sca140111_c", "sca140131_c",
+    "sca140161_c", "sca140201_c", "sca140281_c", "sca140341_c"
+  ),
+  new_names = names(poly_items),
+  change = list(
+    raw = FALSE,
+    dich = FALSE,
+    poly = TRUE,
+    type = "CMC",
+    correct = NA_character_
+  )
+)
+```
+
+### Inspect sparse categories for polytomous items
+
+Following the preparation vignette (`prepare_data`), collapse polytomous
+response categories with fewer than 200 responses using
+`collapse_response_categories()`. Register the resulting item columns in
+`vars` and use those replacements in `mixed`. Keep the original,
+uncollapsed items for sum scores and release (`suf`).
+
+**Manual exception:** for `sca14034s_c`, the automatic procedure cannot
+retain two categories meeting the threshold. Its 409 valid scores have
+frequencies 1, 5, 23, 67, 133, 119 and 61 for scores 0--6. No split
+between adjacent scores gives two groups of at least 200. This example
+manually combines scores 0--4 into 0 and 5--6 into 1, giving 229 and 180
+responses. The second category remains below 200. 
+```{r sparse-categories}
+
+# Show a frequency table for each combined item, including empty categories.
+# Negative missing codes are not response categories.
+for (item in names(poly_items)) {
+  cat("\nItem:", item, "\n")
+  responses <- resp[[item]]
+  valid_responses <- responses[!is.na(responses) & responses >= 0]
+  possible_scores <- 0:length(poly_items[[item]])
+  print(table(factor(valid_responses, levels = possible_scores)))
+}
+
+# Collapse categories with fewer than 200 responses.
+names_before_collapsing <- names(resp)
+resp <- NEPSroutines::collapse_response_categories(
+  resp,
+  vars,
+  select = "poly",
+  per_cat = 200
+)
+
+# Manually combine the item that cannot be collapsed automatically.
+# Copy first to preserve all missing codes and NA values.
+resp$sca14034s_c_collapsed <- resp$sca14034s_c
+resp$sca14034s_c_collapsed[resp$sca14034s_c %in% 0:4] <- 0
+resp$sca14034s_c_collapsed[resp$sca14034s_c %in% 5:6] <- 1
+table(resp$sca14034s_c_collapsed[resp$sca14034s_c_collapsed >= 0])
+# setdiff() identifies the new columns added by automatic and manual scoring.
+# Removing "_collapsed" gives the names of their original versions.
+collapsed_items <- setdiff(names(resp), names_before_collapsing)
+original_items <- sub("_collapsed$", "", collapsed_items)
+
+# Add metadata rows only if the function created collapsed versions.
+if (length(collapsed_items) > 0) {
+  vars <- NEPSroutines::duplicate_items(
+    vars,
+    old_names = original_items,
+    new_names = collapsed_items
+  )
+}
+```
+
+## Prepare socio-demographic variables
+
+Prepare age and number of books for the descriptive and DIF analyses. Sex and rotation are already binary.
+
+The variable `books` is reconstructed from `t34005a`.
+Age is calculated from test date (year, month) and birth date (year, month, day).
+For more information (e.g., rules on dichotomization), see vignette `prepare_data`.
+
+```{r socio-demographic-variables}
+
+# Calculate age from birth and test date
+resp$age <- NEPSroutines::calculate_age(
+  resp,
+  birth_year = "birthy",
+  birth_month = "birthm",
+  test_year = "testy",
+  test_month = "testm"
+)
+
+# Check the input categories used for books; missing values are allowed.
+stopifnot(all(is.na(resp$t34005a) | resp$t34005a %in% 1:6))
+
+# Create binary books variable 
+resp$books <- ifelse(
+  is.na(resp$t34005a),
+  NA_integer_,
+  as.integer(resp$t34005a %in% 4:6)
+)
+
+# Create labels for binary socio-demographic variables
+attr(resp$books, "labels") <- 
+  c(lower_book_category = 0, higher_book_category = 1)
+attr(resp$rotation, "labels") <- c(first = 0, second = 1)
+
+```
+
+Sex is already coded 0/1 and does not need recoding.
+
+Age is continuous; no median split is needed by this scaling example.
+`rotation` is already binary.
+
+# Prepare vars
+
+Now, additional columns are created in `vars`:
+
+- `mixed` includes the standalone scored items and combined polytomous
+  items; it excludes their constituent subitems to avoid counting the
+  same task twice,
+- `dich` retains all 60 individual scored responses for dichotomous
+  analyses,
+- `scoring` gives an item weight,
+- `num_cat` here denotes the maximum possible score (5 for five
+  subitems, even though scores 0 through 5 have six categories).
+
+Positions and level membership describe the multi-stage test design.
+Different items can share a position if they occur on different routes.
+Do not renumber the whole item pool consecutively: a participant's
+route has up to 18 positions, although the full pool has 34 items.
+```{r prepare-vars}
+
+# Create variable indicating which items to use for polytomous analyses
+vars$mixed <- vars$poly | (vars$dich & !vars$item %in% unlist(poly_items))
+vars$mixed[vars$item %in% original_items] <- FALSE
+
+# Create scoring variable for IRT analyses: 
+# usually 1 for dichotomous, 0.5 for polytomous items
+vars$scoring <- 1
+for (item in vars$item[vars$poly]) {
+  vars$scoring[vars$item == item] <- 
+    if (max(resp[[item]], na.rm = TRUE) > 1) 0.5 else 1
+}
+
+# Create the maximum possible score per item (not the count of categories).
+vars$num_cat <- 1
+for (item in names(poly_items)) {
+  vars$num_cat[vars$item == item] <- length(poly_items[[item]])
+}
+for (item in collapsed_items) {
+  vars$num_cat[vars$item == item] <- max(resp[[item]], na.rm = TRUE)
+}
+# Create variable indicating all original scored items for sum scores & release
+# (including polytomous items, but without collapsed response categories) 
+vars$suf <- vars$mixed
+vars$suf[vars$item %in% original_items] <- TRUE
+vars$suf[vars$item %in% collapsed_items] <- FALSE
+
+# Create variable indicating all raw multiple-choice items for distractor analysis
+vars$distan <- vars$raw & vars$type == "MC"
+stopifnot(
+  sum(vars$raw) == 60, sum(vars$dich) == 60, sum(vars$mixed) == 34
+)
+
+# Check new variables
+knitr::kable(vars[vars$mixed, c("item", "type", "scoring", "num_cat", "pos")])
+
+```
+
+## Prepare stage and level selections
+
+Stage 1 occupies positions 1--6, stage 2 positions 7--12, and stage 3
+positions 13--18. Create the item flags from these positions. The
+`level1`, `level2` and `level3` columns are test-specification information
+retained from the raw-item rows, not inferred from participants' answers.
+An item can belong to more than one level. A level is not a stage and
+is not a mutually exclusive participant group.
+
+```{r item-stages}
+# Identify the stage of each item from its position on a test route.
+vars$stage1 <- vars$pos %in% 1:6
+vars$stage2 <- vars$pos %in% 7:12
+vars$stage3 <- vars$pos %in% 13:18
+
+# Create item selections for stage-specific analyses and scores.
+vars$dich_stage1 <- vars$dich & vars$stage1
+vars$dich_stage2 <- vars$dich & vars$stage2
+vars$dich_stage3 <- vars$dich & vars$stage3
+vars$mixed_stage1 <- vars$mixed & vars$stage1
+vars$mixed_stage2 <- vars$mixed & vars$stage2
+vars$mixed_stage3 <- vars$mixed & vars$stage3
+vars$suf_stage1 <- vars$suf & vars$stage1
+vars$suf_stage2 <- vars$suf & vars$stage2
+vars$suf_stage3 <- vars$suf & vars$stage3
+
+# Select items at each level when a level-specific item set is needed.
+vars$mixed_level1 <- vars$mixed & vars$level1
+vars$mixed_level2 <- vars$mixed & vars$level2
+vars$mixed_level3 <- vars$mixed & vars$level3
+
+# Each item must belong to exactly one stage and at least one level.
+stopifnot(
+  all(rowSums(vars[, c("stage1", "stage2", "stage3")]) == 1),
+  all(rowSums(vars[, c("level1", "level2", "level3")]) >= 1)
+)
+```
+
+Following the accompanying scaling example, a participant's stage flag
+is TRUE when they have at least one valid individual response in that
+stage. A score of zero counts as valid; negative codes and `NA` do not.
+These are response-based indicators, not complete administration records:
+someone whose responses are all omitted will have FALSE even if given
+that stage. Route/administration records would be preferable if available.
+No separate routing variable is available here. Participants can have
+TRUE in more than one stage; do not treat stages as exclusive booklets.
+
+```{r participant-stages}
+# Count valid individual responses separately for each stage.
+for (stage in c("stage1", "stage2", "stage3")) {
+  stage_items <- vars$item[vars$dich & vars[[stage]]]
+  stage_responses <- resp[, stage_items]
+  resp[[stage]] <- rowSums(!is.na(stage_responses) & stage_responses >= 0) > 0
+}
+
+# Show how many participants have a valid response in each stage.
+colSums(resp[, c("stage1", "stage2", "stage3")])
+
+# Stage endpoints used by multi-stage missing-response analyses.
+stages <- c(stage1 = 6, stage2 = 12, stage3 = 18)
+```
+
+## Define valid cases
+
+A valid case has at least three non-missing, valid responses in the
+mixed item set. Responses missing by design (`-54`) do not count. A score of zero counts as a valid response. Include
+`NA` explicitly because `min_val()` uses membership in `invalid` when
+that argument is supplied.
+
+```{r valid-cases}
+
+# Create variable indicating whether a person provided the minimum number of 
+# valid responses
+resp$valid <- NEPSroutines::min_val(
+  resp,
+  vars,
+  select = "mixed",
+  min.val = 3,
+  invalid = c(unname(mvs), NA_real_)
+)
+
+# Check new variable
+table(resp$valid, useNA = "ifany")
+
+```
+
+# Validation
+
+Check that the data have the columns and values required by the package.
+These checks use only the data we have prepared. If a check fails, R
+stops and reports the problem; otherwise, preparation continues.
+
+```{r check-data}
+
+# Check that each item name occurs only once in vars.
+NEPSroutines::check_items(vars$item)
+
+# Check that participant IDs are unique and are not missing.
+stopifnot(!anyNA(resp$ID_t))
+NEPSroutines::check_pid(resp$ID_t)
+
+# Check that the required item-information columns exist.
+NEPSroutines::check_variables(
+  vars, 
+  "vars", c("item", "type", "correct", "pos")
+  )
+# Check that every item listed in vars has a response column in resp.
+NEPSroutines::check_variables(
+  resp, 
+  "resp", c("ID_t", vars$item)
+  )
+
+# Check that item-selection flags contain TRUE/FALSE, without missing values.
+NEPSroutines::check_logicals(
+  vars, 
+  "vars", c("raw", "dich", "poly", "mixed", "suf", "distan",
+    "stage1", "stage2", "stage3", "level1", "level2", "level3")
+  )
+# Check that every participant has a TRUE/FALSE valid-case flag.
+NEPSroutines::check_logicals(
+  resp, 
+  "resp", c("valid", "stage1", "stage2", "stage3"))
+
+# Check that dichotomous scores are numeric and do not exceed 1.
+NEPSroutines::check_numerics(
+  resp,
+  "resp", vars$item[vars$dich], dich = TRUE)
+
+# Check that polytomous scores are numeric.
+NEPSroutines::check_numerics(
+  resp,
+  "resp", vars$item[vars$poly])
+
+# Check each scored item: allow declared missing codes, NA, or whole-number
+# scores between zero and the maximum possible score for that item.
+for (item in vars$item[vars$dich | vars$poly]) {
+  x <- resp[[item]]
+  stopifnot(all(
+    is.na(x) |
+      x %in% mvs |
+      (x >= 0 & x <= vars$num_cat[vars$item == item] & x == floor(x))
+  ))
+}
+
+```
+
+# Save data
+
+Keep both raw and scored item columns because the scaling example also
+performs distractor analyses. Keep socio-demographic variables and valid-case status because
+subsequent analyses use them. The saved objects can replace the
+data-loading step in the scaling example.
+
+```{r save-data}
+save(resp, vars, mvs, labels_mvs, stages, file = "dat4_scored.Rdata")
+```
+
+# Load data
+
+In a separate scaling script, you can load the prepared data using:
+
+```r
+load("dat4_scored.Rdata")
+```
+
+# Session
+
+This code provides information on the R session, e.g., the current version of loaded packages. It is important for the reproducibility of the scaling procedure.
+
+```{r session-info}
+sessionInfo()
+```
