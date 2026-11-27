@@ -350,7 +350,7 @@ dim_summary <- function(dimensionality, save = FALSE, name_group = NULL,
 print_dim_summary <- function(dimsum) {
 
   message(
-    "\033[1mRESULTS\033[0m\n",
+    bold("RESULTS"), "\n",
     "Note: A unidimensional model can be assumed if correlations between ",
     "subdimensions are high (> 0.95) and the unidimensional model fits the data ",
     "better than the multidimensional model, see Pohl & Carstensen (2012).\n"
