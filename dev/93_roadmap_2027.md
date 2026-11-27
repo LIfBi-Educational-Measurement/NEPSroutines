@@ -102,9 +102,8 @@ exception: its design decision is taken when the v1.5.0 work starts.
 - #124 add SK and RS missing types: domain answer (open)
 - #129 review `survey_paper.bib` template: domain answer (open)
 - #168 author order: decided 2026-11-26 (keep the current order; see issue comment)
-- #173 birth-year replacement in `calculate_age`: it changes a default, so
-  decide whether it ships in v1.3.2 with a clear `NEWS.md` entry or belongs
-  in v1.4.0. It is the least patch-like item in v1.3.2. (open)
+- #173 birth-year replacement in `calculate_age`: decided 2026-11-27
+  (implement as described in the issue, in v1.4.0, WP 2.4)
 - #11 linking: decide whether linking returns to the package as a
   reimplementation (from `dev/linking/linking.R`, with the tests from the
   closed PR #59 as the spec) or stays out of scope. The implementation itself
@@ -112,9 +111,8 @@ exception: its design decision is taken when the v1.5.0 work starts.
 - #117: opt-in `device` argument or new default output format (open)
 - #74: warning, `strict` parameter, or keep the error (open)
 - #96: kernel and bandwidth choice, due when the v1.5.0 work starts (open)
-- #195: remove the outdated `TblPars()` footnote on percent correct for
-  polytomous items, or rewrite it, which changes the table in every report
-  with polytomous items (open)
+- #195 outdated `TblPars()` footnote: decided 2026-11-27 (remove the block;
+  the reviewers confirm the removal in the PR)
 - #208: print tables with `knitr::kable()`, which moves `knitr` from
   `Suggests` to `Imports`, or keep the current printing (open)
 - #210: whether DIF and other socio-demographic variables must be factors
@@ -201,7 +199,6 @@ Status: planned
 - #167 update README
 - #124 add SK and RS missing types (as decided)
 - #129 fix the `survey_paper.bib` template (as decided)
-- #173 birth-year replacement in `calculate_age`, if decided for v1.3.2
 - #195 outdated `TblPars()` footnote on percent correct for polytomous
   items, which never prints (as decided; found in the review of #177)
 
@@ -305,6 +302,9 @@ Status: planned
 - #178 helper that lists the missing codes found in the data and suggests
   `mvs` and `labels_mvs` from the known NEPS codes (split out of #61; the
   joint format for codes and labels stays in #61)
+- #173 `calculate_age()` no longer replaces a missing birth year by the
+  sample median (only the birth month); changes results, so it is listed in
+  `NEWS.md` (moved from WP 1.3, as decided)
 
 **WP 2.3a: Wright map** (due 2027-07-02, parallel to WP 2.4)
 
