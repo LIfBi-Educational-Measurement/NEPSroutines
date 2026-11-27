@@ -365,8 +365,7 @@ print_dim_summary <- function(dimsum) {
   {
     model <- sub(".* ", "", multi)
     message(
-      "\033[1mCorrelations (variances on the diagonal) of '",
-      model, "' model:\033[0m"
+      bold("Correlations (variances on the diagonal) of '", model, "' model:")
     )
     print(dimsum[[multi]])
   }
