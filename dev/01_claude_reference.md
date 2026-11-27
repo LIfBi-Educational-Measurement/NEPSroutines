@@ -99,6 +99,10 @@ interchangeable:
 
 **macOS CI: magick::image_graph() crash (SIGABRT)**: On macOS ARM64 GitHub Actions runners, calling `magick::image_graph()` + ggplot2 text rendering (`annotate("text", ...)`) causes a C-level abort (Abort trap: 6 / SIGABRT) due to missing FreeType fonts. This is NOT a catchable R error — it crashes the entire R process. Do NOT try to probe for this with `tryCatch`. Fix: add `skip_on_os("mac")` for any test that calls `Fig()` with a footnote, or `FigWrightMap()` (which always adds a footnote). Basic `magick::image_read/crop/scale` without text rendering works fine on macOS.
 
+### Finding polytomous items (2026-11-27)
+
+**`xsi` row names depend on the model type**: in a PCM2 model the step parameters are named `<item>_step<n>`, in a GPCM model `<item>_Cat<n>`. Code that finds polytomous items from `_step` names (as first drafted for #177) silently misses them in a GPCM model. Where the model type is not fixed, take polytomous items from the data instead, e.g. `apply(model$mod$resp, 2, max, na.rm = TRUE) > 1`.
+
 ### Editing CONTRIBUTING (2026-11-26)
 
 **Knitting `CONTRIBUTING.Rmd` reformats the whole `CONTRIBUTING.md`**: `CONTRIBUTING.md` is knitted from `CONTRIBUTING.Rmd` (`output: github_document`), but `rmarkdown::render()` with the local Pandoc version indents every list differently (`-   ` instead of `- `) and rewraps paragraphs. A three-paragraph edit came out as about 80 changed lines, which hides the real change from the reviewer. Fix: edit the `.Rmd`, then make the same edit in the `.md` by hand, matching its existing wrapping at 72 columns, and check with `git diff --stat` that only the intended lines changed. Re-knit the whole file only in a PR whose purpose is the reformat.

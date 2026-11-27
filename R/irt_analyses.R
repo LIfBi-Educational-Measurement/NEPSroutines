@@ -1108,14 +1108,22 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
   pc_mean <- round(mean(irt_sum$correct, na.rm = TRUE), digits)
   pc_median <- round(median(irt_sum$correct, na.rm = TRUE), digits)
   pc_sd <- round(sd(irt_sum$correct, na.rm = TRUE), digits)
+  max_score <- apply(model$mod$resp, 2, max, na.rm = TRUE)
+  poly_items <- names(max_score)[max_score > 1]
   message("\033[1mPercentage correct:\033[0m\n",
-          "The percentage of correct responses within dichotomous items varied between ",
+          "The percentage of correct responses varied between ",
           pc_min, "% (", ifelse(length(pc_min_item) > 1, "items ", "item "),
           list_elements(pc_min_item), ") and ",
           pc_max, "% (", ifelse(length(pc_max_item) > 1, "items ", "item "),
           list_elements(pc_max_item),
           ") with an average of ", pc_mean, "% (SD = ",
-          pc_sd, "%), and a median of ", pc_median, "% correct responses.\n")
+          pc_sd, "%), and a median of ", pc_median, "% correct responses.",
+          if (length(poly_items) > 0) paste0(
+            " For polytomous ", ifelse(length(poly_items) > 1, "items ", "item "),
+            "(", list_elements(poly_items), "), the percentage is the mean ",
+            "item score relative to the highest observed score."
+          ),
+          "\n")
 
   ## Item difficulties
   xsi_min <- min(irt_sum$xsi, na.rm = TRUE)
