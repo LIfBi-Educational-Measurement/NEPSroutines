@@ -1183,7 +1183,7 @@ print_dif_summary <- function(resp, diflist, res, dif_threshold = 0.4) {
     message(bold("RESULTS FOR THE DIF VARIABLE '", toupper(dif_var), "'"), "\n")
 
     # facets and group counts
-    message("\033[1mFacets and group counts:\033[0m\n")
+    message(bold("Facets and group counts:"), "\n")
     print(res$facets)
 
     # information criteria table
