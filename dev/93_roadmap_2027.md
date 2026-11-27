@@ -333,3 +333,9 @@ restructuring of the package (such as #119) comes after July 2027.
   changes the saved output format, so it needs a decision with the
   co-authors first. Placed here provisionally; it is closely related to the
   report template item above.
+- #199 harmonize the cut-offs used to flag items (WMNSQ, t, rit, aQ3, DIF,
+  distractors) across the printouts, argument defaults, vignettes and the
+  report template, with one systematic check of all cut-offs. Done together
+  with #188, because cut-offs applied to rounded values only work once
+  results are no longer loaded from rounded tables. Needs a domain decision
+  on the values and boundaries.
