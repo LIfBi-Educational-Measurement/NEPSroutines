@@ -357,7 +357,7 @@ print_dim_summary <- function(dimsum) {
     )
 
   # Variance of unidimensional model
-  message("\033[1mVariance of unidimensional model:\033[0m")
+  message(bold("Variance of unidimensional model:"))
   print(dimsum[["Cor-Var uni"]])
 
   # Correlations (variances on the diagonal) of multidimensional models
