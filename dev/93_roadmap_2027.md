@@ -84,7 +84,10 @@ time; most fixes in WP 1.1 and 1.2 are small reviews.
   in one or two sentences. Whoever implements it finds it there.
 - **Open decisions carry the `decision needed` label.** The label comes off
   when the decision comment is posted, so the issue list filtered by that
-  label always shows what is still undecided.
+  label always shows what is still undecided. It is only for decisions the
+  maintainers have to discuss with each other (scope, defaults that change
+  results, domain questions). Implementation choices are made in the issue
+  by whoever implements it and need no label.
 - **The roadmap shows only the result.** Each entry in the decision list
   below is marked `open` or `decided <date>`; the reasons stay on the issue.
 - **Each work package has a status line:** `planned`, `in progress`,
@@ -96,9 +99,7 @@ time; most fixes in WP 1.1 and 1.2 are small reviews.
 
 ## Decisions (due 2027-01-08)
 
-Settled before coding starts, so no work package waits for them. #96 and #74
-are the exceptions: #96 is decided when the v1.5.0 work starts, #74 when it is
-implemented in WP 2.4.
+Settled before coding starts, so no work package waits for them.
 
 - #124 add SK and RS missing types: default name for -21 (j-welling) and the
   SUF labels for -21/-22 (j-welling, tgnambs), asked on the issue (open)
@@ -115,10 +116,6 @@ implemented in WP 2.4.
   opaque. (open)
 - #117 vector graphics: decided 2026-11-27 (opt-in argument that takes a
   vector of formats; the default stays PNG only)
-- #74: warning, `strict` parameter, or keep the error; decided when the
-  issue is implemented in WP 2.4, on the basis of the research notes on the
-  issue (open)
-- #96: kernel and bandwidth choice, due when the v1.5.0 work starts (open)
 - #195 outdated `TblPars()` footnote: decided 2026-11-27 (remove the block;
   the reviewers confirm the removal in the PR)
 - #208: print tables with `knitr::kable()`, which moves `knitr` from
@@ -307,7 +304,8 @@ so it no longer has to be run by hand before each release.
 Status: planned
 
 - #174 set collapsing rules on part of the sample
-- #74 `check_dich()` and all-NA columns in booklet designs
+- #74 `check_dich()` and all-NA columns in booklet designs (how to handle
+  them is decided when implementing, using the research notes on the issue)
 - #178 helper that lists the missing codes found in the data and suggests
   `mvs` and `labels_mvs` from the known NEPS codes (split out of #61; the
   joint format for codes and labels stays in #61)
@@ -346,8 +344,8 @@ Status: planned
 ## v1.5.0 (minor: printed output and ICC smoothing; dates to be set)
 
 Starts after v1.4.0, so it lies after the period this roadmap plans in
-detail; its dates are set once v1.4.0 is out and the decisions on #96, #208
-and #210 are taken. The non-breaking rules of v1.4.0 apply.
+detail; its dates are set once v1.4.0 is out and the decisions on #208 and
+#210 are taken. The non-breaking rules of v1.4.0 apply.
 
 **WP 2.5: Printed output** (due date to be set)
 
