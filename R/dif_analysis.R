@@ -42,7 +42,7 @@
 #' @param warn  logical; whether to print warnings (should be set to TRUE)
 #' @param verbose  logical; whether to print processing information to console
 #' @param dif_threshold numeric scalar; indicates absolute threshold of
-#' problematic DIF (defaults to 0.5)
+#' problematic DIF (defaults to 0.4)
 #' @param digits  integer; number of decimals for rounding
 #'
 #' @return (if return = TRUE) a list of:
@@ -73,7 +73,7 @@ dif_analysis <- function(
     name_group = NULL,
     verbose = FALSE,
     warn = TRUE,
-    dif_threshold = 0.5,
+    dif_threshold = 0.4,
     digits = 3
   ) {
 
@@ -277,7 +277,7 @@ conduct_dif_analysis <- function(
 #' @param vars data.frame; contains information about items with items as rows;
 #' includes variable 'item' containing item names
 #' @param dif_threshold numeric scalar; indicates absolute threshold of
-#' problematic DIF (defaults to 0.5)
+#' problematic DIF (defaults to 0.4)
 #' @param print  logical; whether results shall be printed to console
 #' @param save  logical; whether results shall be saved to hard drive
 #' @param path_results  string; defines path to folder where results shall be saved
@@ -292,7 +292,7 @@ summarize_dif_analysis <- function(
     dif_models,
     dif_vars,
     vars,
-    dif_threshold = 0.5,
+    dif_threshold = 0.4,
     print = TRUE,
     save = TRUE,
     overwrite = FALSE,
@@ -822,7 +822,7 @@ pcm_dif <- function(
 #' @param vars data.frame; contains information about items with items as rows;
 #' includes variable 'item' containing item names
 #' @param dif_threshold numeric scalar; indicates absolute threshold of
-#' problematic DIF (defaults to 0.5)
+#' problematic DIF (defaults to 0.4)
 #' @param print logical; whether results shall be printed to console
 #' @param save  logical; whether results shall be saved to hard drive
 #' @param path  string; defines path to folder where tables shall be saved
@@ -842,7 +842,7 @@ dif_summary <- function(
     print = TRUE,
     save = TRUE,
     path = 'Tables',
-    dif_threshold = 0.5,
+    dif_threshold = 0.4,
     suf_item_names = FALSE,
     overwrite = FALSE,
     name_group = NULL,
@@ -1173,34 +1173,39 @@ build_dif_tr_tables <- function(
 #' @param diflist list; return object of dif_model(); with main and dif model
 #' @param res list; return object of dif_summary()
 #' @param dif_threshold numeric scalar; indicates absolute threshold of
-#' problematic DIF (defaults to 0.5)
+#' problematic DIF (defaults to 0.4)
 #'
 #' @export
-print_dif_summary <- function(resp, diflist, res, dif_threshold = 0.5) {
+print_dif_summary <- function(resp, diflist, res, dif_threshold = 0.4) {
 
     dif_var <- diflist$dif_var
 
-    message("\nRESULTS FOR THE DIF VARIABLE '", dif_var, "':")
+    message("\033[1mRESULTS FOR THE DIF VARIABLE '", toupper(dif_var), "'\033[0m\n")
 
     # facets and group counts
-    message("\nFacets and group counts:\n")
+    message("\033[1mFacets and group counts:\033[0m\n")
     print(res$facets)
 
     # information criteria table
-    message("\nInformation criteria:\n")
+    message("\033[1mInformation criteria:\033[0m\n")
     print(res$gof)
 
     # main effects table
-
-    message("\nMain effects of DIF model and main effects model:\n")
+    message(
+      "\033[1mMain effects in the DIF and ME model:\033[0m\n",
+      "(The main effect represents the difference in latent ability between ",
+      "the two groups [first group − second group].\n",
+      "Positive values indicate higher ability in the first group, ",
+      "whereas negative values indicate higher ability in the second group.)\n"
+      )
 
     for (i  in names(res$mne)) {
         message("Comparison ", i, ":")
         print(res$mne[[i]])
     }
 
-    # problematic dif values (significant p-value, larger than 0.5 logits)
-    message("\nItems exhibiting problematic DIF (|xsi| >= ", dif_threshold, "):\n")
+    # problematic dif values (significant p-value, larger than pre-defined threshold)
+    message("\033[1mItems exhibiting problematic DIF (|xsi| >= ", dif_threshold, "):\033[0m\n")
 
     for (i  in names(res$est)) {
         message("Comparison ", i, ":")
@@ -1211,7 +1216,7 @@ print_dif_summary <- function(resp, diflist, res, dif_threshold = 0.5) {
             print(res$est[[i]][f, ])
             if (any(sig)) message("*: p < .05")
         } else {
-            message("No items found.")
+            message("No items found.\n")
         }
     }
 }
