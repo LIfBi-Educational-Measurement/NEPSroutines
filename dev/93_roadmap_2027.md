@@ -9,7 +9,8 @@ on [GitHub](https://github.com/LIfBi-Educational-Measurement/NEPSroutines/issues
 the release dates below are mirrored onto the milestone due dates.
 Issues are referenced as `#n`.
 
-Base state: v1.3.0 released; milestones v1.3.1, v1.3.2 and v1.4.0 exist.
+Base state: v1.3.0 released; milestones v1.3.1, v1.3.2, v1.3.3, v1.4.0,
+v1.5.0 and "Backlog (after July 2027)" exist.
 
 Every release ends with a release window: code freeze, then the
 [release checklist](94_release_checklist.md), then tag and GitHub release.
@@ -19,7 +20,9 @@ A work package is done when its PRs are merged into `main`.
 |---------|-------|---------------|-------------|--------------|
 | v1.3.1  | patch | WP 1.1        | 2027-01-15  | 2027-01-29   |
 | v1.3.2  | patch | WP 1.2, 1.3   | 2027-03-05  | 2027-03-19   |
-| v1.4.0  | minor | WP 2.1 to 2.4 | 2027-07-16  | 2027-07-30   |
+| v1.3.3  | patch | WP 2.1, 2.2   | 2027-05-21  | 2027-06-04   |
+| v1.4.0  | minor | WP 2.3, 2.4   | 2027-07-16  | 2027-07-30   |
+| v1.5.0  | minor | WP 2.5, #96   | to be set   | to be set    |
 
 | Period              | Work                                              | Due        |
 |---------------------|---------------------------------------------------|------------|
@@ -31,8 +34,9 @@ A work package is done when its PRs are merged into `main`.
 | early Mar – mid Mar | v1.3.2 release window                             | 2027-03-19 |
 | Mar – mid Apr       | WP 2.1 fixtures and test health                   | 2027-04-16 |
 | mid Apr – late May  | WP 2.2 pipeline tests                             | 2027-05-21 |
-| late May – mid Jun  | WP 2.4 data preparation and validation            | 2027-06-11 |
-| late May – mid Jun  | WP 2.3a Wright map (parallel to WP 2.4)           | 2027-06-18 |
+| late May – early Jun| v1.3.3 release window                             | 2027-06-04 |
+| early Jun – late Jun| WP 2.4 data preparation and validation            | 2027-06-25 |
+| early Jun – early Jul| WP 2.3a Wright map (parallel to WP 2.4)          | 2027-07-02 |
 | late Jun – early Jul| WP 2.3b plot output and small additions           | 2027-07-09 |
 | mid Jul – end Jul   | v1.4.0 release window                             | 2027-07-30 |
 
@@ -41,7 +45,9 @@ bug fixes users benefit from and contains no new features. Work packages that
 change only tests, or that add features, do not. Until the pipeline tests
 (WP 2.2) exist, each release needs the manual result comparison, so patch
 releases are bundled rather than cut after every work package (v1.3.1 is
-the exception, because its report fixes are urgent). From v1.4.0
+the exception, because its report fixes are urgent). v1.3.3 is the other
+exception: it changes only tests, but it ships the pipeline tests as a clean
+reference point before the feature work of v1.4.0. From v1.3.3
 on, the pipeline tests make patch releases cheap, and fixes can ship when
 they are ready instead of waiting for the next minor release. Patch releases
 use the shorter patch scope of the
@@ -65,7 +71,7 @@ plan is therefore limited by review time and by decisions, not by coding time.
   code is written.
 - Agents never work with real NEPS data or with output computed from it.
   Every run on real NEPS data (the manual comparison up to v1.3.2, the local
-  real-data tests from v1.4.0 on) is done by the team.
+  real-data tests from v1.3.3 on) is done by the team.
 
 Review effort is uneven: the pipeline tests (WP 2.2), the regenerated fixtures
 (WP 2.1) and the rewrite of `wright_map()` (#112) need the most review
@@ -91,7 +97,7 @@ time; most fixes in WP 1.1 and 1.2 are small reviews.
 ## Decisions (due 2027-01-08)
 
 Settled before coding starts, so no work package waits for them. #96 is the
-exception: its design decision is taken at the start of WP 2.3b.
+exception: its design decision is taken when the v1.5.0 work starts.
 
 - #124 add SK and RS missing types: domain answer (open)
 - #129 review `survey_paper.bib` template: domain answer (open)
@@ -105,7 +111,7 @@ exception: its design decision is taken at the start of WP 2.3b.
   comes after July 2027. (open)
 - #117: opt-in `device` argument or new default output format (open)
 - #74: warning, `strict` parameter, or keep the error (open)
-- #96: kernel and bandwidth choice, due at the start of WP 2.3b (open)
+- #96: kernel and bandwidth choice, due when the v1.5.0 work starts (open)
 - #195: remove the outdated `TblPars()` footnote on percent correct for
   polytomous items, or rewrite it, which changes the table in every report
   with polytomous items (open)
@@ -205,9 +211,11 @@ Status: planned
   Results are still compared manually with `dev/manual_test_scripts/`; this
   is the last planned release that does so.
 
-## v1.4.0 (minor: tests, then non-breaking features)
+## v1.3.3 and v1.4.0 (tests, then non-breaking features)
 
-Non-breaking means:
+The test work (WP 2.1, 2.2) ships as the patch release v1.3.3, the features
+(WP 2.3, 2.4) as the minor release v1.4.0. Non-breaking, for v1.4.0 and the
+later v1.5.0, means:
 
 1. Previously saved results (`.rds`) still load and render. New code
    tolerates objects that lack whatever it adds, with a fallback rather than
@@ -273,17 +281,22 @@ so it no longer has to be run by hand before each release.
   pipeline tests, and propose the matching change to "Checks and Tests" in
   `CONTRIBUTING.Rmd` (and the knitted `CONTRIBUTING.md`) to the admins in a
   PR.
-- If the pipeline tests turn up real bugs, fix them and cut a v1.3.3 patch
-  release right after WP 2.2. This works only before WP 2.3 and 2.4 features
-  reach `main`, so a release can still be made from `main` without a separate
-  release branch. v1.3.3 is compared with the new pipeline tests plus the
-  team's real-data run. It also ships the test work of WP 2.1 and 2.2, which
-  does not change the package for users. Its two-week release window moves
-  WP 2.4 and 2.3a back by two weeks; WP 2.3b keeps its date by dropping #96
-  first, and the v1.4.0 dates stay. v1.3.3 then gets its own milestone and a
-  row in the tables above.
+- If the pipeline tests turn up real bugs, fix them in WP 2.2, so they ship
+  with v1.3.3.
 
-**WP 2.4: Data preparation and validation** (due 2027-06-11)
+**Release v1.3.3** (2027-05-21 to 2027-06-04)
+
+- Ships the test work of WP 2.1 and 2.2, which does not change the package
+  for users, plus any fixes the pipeline tests turned up. It is released from
+  `main` before the WP 2.3 and 2.4 features reach it, so no separate release
+  branch is needed.
+- Run the patch scope of the [release checklist](94_release_checklist.md),
+  for the first time with the pipeline tests instead of the manual
+  comparison, plus the team's real-data run.
+- Its release window moves WP 2.4 and 2.3a back by two weeks. WP 2.3b keeps
+  its date because #96 moved to v1.5.0, and the v1.4.0 dates stay.
+
+**WP 2.4: Data preparation and validation** (due 2027-06-25)
 
 Status: planned
 
@@ -293,7 +306,7 @@ Status: planned
   `mvs` and `labels_mvs` from the known NEPS codes (split out of #61; the
   joint format for codes and labels stays in #61)
 
-**WP 2.3a: Wright map** (due 2027-06-18, parallel to WP 2.4)
+**WP 2.3a: Wright map** (due 2027-07-02, parallel to WP 2.4)
 
 Status: planned
 
@@ -312,9 +325,18 @@ Status: planned
 - #116 add `item` argument to `GetMvi()`
 - #169 confirmation messages in validation check functions (moved from
   WP 2.4 to spread the review load)
-- #96 opt-in kernel smoothing for empirical ICC curves; first decide the
-  kernel and how the bandwidth is chosen, then build it on the reworked plot
-  code. If the schedule slips, #96 moves after July 2027 first.
+
+**Release v1.4.0** (2027-07-16 to 2027-07-30)
+
+- Run the full [release checklist](94_release_checklist.md), with the pipeline
+  tests from WP 2.2 replacing the manual comparison. The team runs the local
+  real-data tests.
+
+## v1.5.0 (minor: printed output and ICC smoothing; dates to be set)
+
+Starts after v1.4.0, so it lies after the period this roadmap plans in
+detail; its dates are set once v1.4.0 is out and the decisions on #96, #208
+and #210 are taken. The non-breaking rules of v1.4.0 apply.
 
 **WP 2.5: Printed output** (due date to be set)
 
@@ -322,8 +344,7 @@ Status: planned
 
 Follows the printed-output rework in v1.3.1 (see WP 1.1). These change
 printed output on purpose, so each change is listed in `NEWS.md` (rule 2
-above). No due date yet: if the work does not fit before the v1.4.0 code
-freeze, it moves after July 2027.
+above).
 
 - #211 descriptive statistics: show the values as row names in the tables
   of item types and missing values
@@ -337,11 +358,12 @@ freeze, it moves after July 2027.
 - #213 bold headings also in rendered R Markdown, which currently show them
   as plain text (see #205)
 
-**Release v1.4.0** (2027-07-16 to 2027-07-30)
+**Also in v1.5.0**
 
-- Run the full [release checklist](94_release_checklist.md), with the pipeline
-  tests from WP 2.2 replacing the manual comparison. The team runs the local
-  real-data tests.
+- #96 opt-in kernel smoothing for empirical ICC curves; first decide the
+  kernel and how the bandwidth is chosen, then build it on the plot code
+  reworked in v1.4.0 (moved from WP 2.3b to make room for the v1.3.3 release
+  window)
 
 ## After July 2027 (to be decided)
 
