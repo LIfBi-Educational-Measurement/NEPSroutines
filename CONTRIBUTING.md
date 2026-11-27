@@ -137,6 +137,15 @@ contributors may create a release as well.
 
 ### Checks and Tests
 
+Before every release, work through the [release
+checklist](dev/94_release_checklist.md). Copy it into the release
+milestone or a release-prep issue and tick the items there.
+
+**Code freeze:** during the code freeze (from the freeze date in the
+current roadmap in `dev/` until the release), only fixes found by the
+release checklist are merged into `main`. Work for the next release
+stays on its branches until after the release.
+
 At the moment, testing is done manually by comparing the results of the
 current version to results of the previous version using example NEPS
 data. In the future, automatic tests based on simulated data shall
@@ -154,12 +163,16 @@ devtools::check()
 
 ### Create Release
 
-Once all checks and tests pass, you can create a new release in five
+Once all checks and tests pass, you can create a new release in six
 steps:
 
 1.  **Update the DESCRIPTION and** **CITATION file** by changing the
     package version number and potentially adding new contributors as
-    package authors or new features in the package description. The
+    package authors or new features in the package description. Also add
+    or update the `Date:` field in DESCRIPTION with the release date.
+    CITATION reads the version and the year from DESCRIPTION but lists
+    the authors itself, so new authors have to be added in both files.
+    The
     **version number** is given in the format vX.Y.Z. Change…
     1.  **X** for **breaking changes** (i.e., code is no longer backward
         compatible)
@@ -192,8 +205,9 @@ git push --tags
 
 5.  **Create a release** on GitHub: In the GitHub repository, go to
     “Releases”. There, select your newly created tag “v.X.Y.Z”. Select
-    “create new release” and add changes since last release as release
-    notes.
+    “create new release” and copy the section of this version from
+    `NEWS.md` as release notes (if there is no `NEWS.md` yet, add the
+    changes since the last release as release notes).
 
 6.  **Create a binary TAR-Ball** and upload it to the release page (only
     this file includes the vignettes):
