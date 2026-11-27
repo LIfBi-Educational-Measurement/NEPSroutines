@@ -97,3 +97,29 @@ test_that("conduct_dis_analysis() works", {
 
 })
 
+test_that("dis_summary() describes correct responses and distractors separately (#212)", {
+
+  # Two items with different numbers of distractors (1 + 2 and 1 + 3 rows)
+  distractors <- list(
+    data.frame(name = c("*a", "b", "c"), N = c(10, 5, 5),
+               rit = c(0.4, -0.1, -0.2)),
+    data.frame(name = c("*a", "b", "c", "d"), N = c(10, 4, 3, 3),
+               rit = c(0.3, -0.3, -0.1, -0.05))
+  )
+
+  expect_no_warning(res <- dis_summary(distractors, digits = 3, save = FALSE))
+
+  corr <- c(0.4, 0.3)
+  dist <- c(-0.1, -0.2, -0.3, -0.1, -0.05)
+  expect_equal(dimnames(res$descriptives),
+               list(c("mean", "sd", "median", "min", "max"),
+                    c("correct", "distract")))
+  expect_equal(res$descriptives[, "correct"],
+               round(c(mean = mean(corr), sd = sd(corr), median = median(corr),
+                       min = min(corr), max = max(corr)), 3))
+  expect_equal(res$descriptives[, "distract"],
+               round(c(mean = mean(dist), sd = sd(dist), median = median(dist),
+                       min = min(dist), max = max(dist)), 3))
+
+})
+
