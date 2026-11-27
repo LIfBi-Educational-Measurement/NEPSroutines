@@ -770,16 +770,18 @@ test_mvp_data <- function(mv_p, grouping, mvs) {
 
 print_mvp_results <- function(mv_p) {
 
-  message("\nTable with results:\n")
+  message(
+    bold("MISSING VALUES PER PERSON\n"),
+    "The table(s) show the summary statistics for the number of items with a ",
+    "certain missing value type per person across the whole test."
+  )
 
     if ('summary' %in% names(mv_p)) {
         print(mv_p$summary)
     } else {
         for (group in names(mv_p)) {
-            message("\nMissing values per person for ", group, " items:\n")
+            message(bold("Missing values per person for ", group, " items:\n"))
             print(mv_p[[group]]$summary)
         }
     }
-
-  message("\n\n")
 }
