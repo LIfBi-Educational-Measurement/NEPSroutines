@@ -1085,7 +1085,22 @@ steps_analysis <- function(
 
 print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
 
-  # Percentage correct
+  # Item fit
+  message("\033[1mSUMMARY OF ITEM FIT\033[0m\n")
+
+  ## Table
+  stats <- irt_sum[names(irt_sum) != "Item"]
+  tbl <- data.frame(
+    min = sapply(stats, min, na.rm = TRUE),
+    max = sapply(stats, max, na.rm = TRUE),
+    median = sapply(stats, median, na.rm = TRUE),
+    mean = sapply(stats, mean, na.rm = TRUE),
+    sd = sapply(stats, sd, na.rm = TRUE)
+  ) |>
+    round(digits)
+  print(tbl)
+
+  ## Percentage correct
   pc_min <- min(irt_sum$correct, na.rm = TRUE)
   pc_min_item <- irt_sum$Item[irt_sum$correct %in% pc_min]
   pc_max <- max(irt_sum$correct, na.rm = TRUE)
@@ -1093,7 +1108,7 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
   pc_mean <- round(mean(irt_sum$correct, na.rm = TRUE), digits)
   pc_median <- round(median(irt_sum$correct, na.rm = TRUE), digits)
   pc_sd <- round(sd(irt_sum$correct, na.rm = TRUE), digits)
-  message("Percentage correct:\n",
+  message("\033[1mPercentage correct:\033[0m\n",
           "The percentage of correct responses within dichotomous items varied between ",
           pc_min, "% (", ifelse(length(pc_min_item) > 1, "items ", "item "),
           list_elements(pc_min_item), ") and ",
@@ -1102,7 +1117,7 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
           ") with an average of ", pc_mean, "% (SD = ",
           pc_sd, "%), and a median of ", pc_median, "% correct responses.\n")
 
-  # Item difficulties
+  ## Item difficulties
   xsi_min <- min(irt_sum$xsi, na.rm = TRUE)
   xsi_min_item <- irt_sum$Item[irt_sum$xsi %in% xsi_min]
   xsi_max <- max(irt_sum$xsi, na.rm = TRUE)
@@ -1110,7 +1125,7 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
   xsi_mean <- round(mean(irt_sum$xsi, na.rm = TRUE), digits)
   xsi_median <- round(median(irt_sum$xsi, na.rm = TRUE), digits)
   xsi_sd <- round(sd(irt_sum$xsi, na.rm = TRUE), digits)
-  message("Item difficulties:\n",
+  message("\033[1mItem difficulties:\033[0m\n",
           "The estimated item difficulties (or location parameters for polytomous variables) varied between ",
           xsi_min, " (", ifelse(length(xsi_min_item) > 1, "items ", "item "),
           list_elements(xsi_min_item), ") and ",
@@ -1119,119 +1134,15 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
           ") with an average of ", xsi_mean, " (SD = ", xsi_sd,
           "), and a median of ", xsi_median, ".\n")
 
-  # SE of item difficulties
+  ## SE of item difficulties
   se_max <- max(irt_sum$SE, na.rm = TRUE)
   se_max_item <- irt_sum$Item[irt_sum$SE %in% se_max]
-  message("SE of item difficulties:\n",
+  message("\033[1mSE of item difficulties:\033[0m\n",
           "The maximum of SEs is ", se_max,
           " (", ifelse(length(se_max_item) > 1, "items ", "item "),
           list_elements(se_max_item), ").\n")
 
-  # WMNSQ
-  wmnsq_min <- min(irt_sum$WMNSQ, na.rm = TRUE)
-  wmnsq_min_item <- irt_sum$Item[irt_sum$WMNSQ %in% wmnsq_min]
-  wmnsq_max <- max(irt_sum$WMNSQ, na.rm = TRUE)
-  wmnsq_max_item <- irt_sum$Item[irt_sum$WMNSQ %in% wmnsq_max]
-  wmnsq_mean <- round(mean(irt_sum$WMNSQ, na.rm = TRUE), digits)
-  wmnsq_median <- round(median(irt_sum$WMNSQ, na.rm = TRUE), digits)
-  wmnsq_sd <- round(sd(irt_sum$WMNSQ, na.rm = TRUE), digits)
-  message("WMNSQ:\n",
-          "The WMNSQ value varied between ", wmnsq_min, " (",
-          ifelse(length(wmnsq_min_item) > 1, "items ", "item "),
-          list_elements(wmnsq_min_item), ") and ", wmnsq_max, " (",
-          ifelse(length(wmnsq_max_item) > 1, "items ", "item "),
-          list_elements(wmnsq_max_item), ") with an average of ",
-          wmnsq_mean, " (SD = ", wmnsq_sd, "), and a median of ",
-          wmnsq_median, ".")
-
-  wmnsq_misfit <- irt_sum$Item[irt_sum$WMNSQ >= 1.15]
-  message(ifelse(
-    length(wmnsq_misfit) == 0,
-    "No item",
-    paste0(
-      ifelse(length(wmnsq_misfit) > 1, "Items ", "Item "),
-      list_elements(wmnsq_misfit)
-      )
-    ),
-    " exhibited a WMNSQ of at least 1.15."
-    )
-
-  # WMNSQ t-value
-  t_min <- min(irt_sum$t, na.rm = TRUE)
-  t_min_item <- irt_sum$Item[irt_sum$t %in% t_min]
-  t_max <- max(irt_sum$t, na.rm = TRUE)
-  t_max_item <- irt_sum$Item[irt_sum$t %in% t_max]
-  t_mean <- round(mean(irt_sum$t, na.rm = TRUE), digits)
-  t_median <- round(median(irt_sum$t, na.rm = TRUE), digits)
-  t_sd <- round(sd(irt_sum$t, na.rm = TRUE), digits)
-  message("\nWMNSQ t-value:\n",
-          "The WMNSQ t-values varied between ",
-          t_min, " (", ifelse(length(t_min_item) > 1, "items ", "item "),
-          list_elements(t_min_item), ") and ",
-          t_max, " (", ifelse(length(t_max_item) > 1, "items ", "item "),
-          list_elements(t_max_item), ") with an average of ",
-          t_mean, " (SD = ", t_sd, "), and a median of ", t_median, ".")
-
-  t_misfit <- irt_sum$Item[irt_sum$t >= 8]
-
-  message(ifelse(
-    length(t_misfit) == 0,
-    "No item",
-    paste0(
-      ifelse(length(t_misfit) > 1, "Items ", "Item "),
-      list_elements(t_misfit)
-      )
-    ),
-    " exhibited a t-value of at least 8."
-  )
-
-  # Correlation of item scores with total correct score
-  rit_min <- min(irt_sum$rit, na.rm = TRUE)
-  rit_min_item <- irt_sum$Item[irt_sum$rit %in% rit_min]
-  rit_max <- max(irt_sum$rit, na.rm = TRUE)
-  rit_max_item <- irt_sum$Item[irt_sum$rit %in% rit_max]
-  rit_mean <- round(mean(irt_sum$rit, na.rm = TRUE), digits)
-  rit_median <- round(median(irt_sum$rit, na.rm = TRUE), digits)
-  rit_sd <- round(sd(irt_sum$rit, na.rm = TRUE), digits)
-  message("\nCorrelation of item scores with total correct score:\n",
-          "The correlations between the item scores and the total correct scores varied between ",
-          rit_min, " (", ifelse(length(rit_min_item) > 1, "items ", "item "),
-          list_elements(rit_min_item), ") and ",
-          rit_max, " (", ifelse(length(rit_max_item) > 1, "items ", "item "),
-          list_elements(rit_max_item), ") with an average correlation of ",
-          rit_mean, " (SD = ", rit_sd, "), and a median correlation of ",
-          rit_median, ".\n")
-
-  # Model variance
-  message("Model variance:\n",
-          "The variance of the model was estimated to be ",
-          round(model$mod$variance[1], 3),".\n")
-
-  # Test reliability
-  eap_rel <- round(model$mod$EAP.rel[1], 3)
-  wle_rel <- round(model$wle_rel[1], 3)
-  message("Test reliability:\n",
-          "EAP/PV reliability = ", eap_rel, "\n",
-          "WLE reliability = ", wle_rel, "\n")
-
-  # Item discrimination
-  disc_min <- min(irt_sum$Discr., na.rm = TRUE)
-  disc_min_item <- irt_sum$Item[irt_sum$Discr. %in% disc_min]
-  disc_max <- max(irt_sum$Discr., na.rm = TRUE)
-  disc_max_item <- irt_sum$Item[irt_sum$Discr. %in% disc_max]
-  disc_mean <- round(mean(irt_sum$Discr., na.rm = TRUE), digits)
-  disc_median <- round(median(irt_sum$Discr., na.rm = TRUE), digits)
-  disc_sd <- round(sd(irt_sum$Discr., na.rm = TRUE), digits)
-  message("Item discrimination:\n",
-          "The estimated discrimination parameters varied between ",
-          disc_min, " (", ifelse(length(disc_min_item) > 1, "items ", "item "),
-          list_elements(disc_min_item), ") and ",
-          disc_max, " (", ifelse(length(disc_max_item) > 1, "items ", "item "),
-          list_elements(disc_max_item), ") with an average discrimination of ",
-          disc_mean, " (SD = ", disc_sd, "), and a median discrimination of ",
-          disc_median, ".\n")
-
-  # Thresholds
+  ## Thresholds
   thresholds <- round(TAM::IRT.threshold(model$mod), digits)
   thresh_min <- min(thresholds, na.rm = TRUE)
   thresh_min_item <- row.names(thresholds)[which(thresholds %in% thresh_min)]
@@ -1240,12 +1151,175 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
   thresh_mean <- round(mean(thresholds, na.rm = TRUE), digits)
   thresh_median <- round(median(thresholds, na.rm = TRUE), digits)
   thresh_sd <- round(sd(thresholds, na.rm = TRUE), digits)
-  message("Thresholds:\n",
+  message("\033[1mThresholds:\033[0m\n",
           "The estimated thresholds varied between ", round(thresh_min, digits),
           " (", ifelse(length(thresh_min_item) > 1, "items ", "item "),
           list_elements(thresh_min_item), ") and ", round(thresh_max, digits),
           " (", ifelse(length(thresh_max_item) > 1, "items ", "item "),
           list_elements(thresh_max_item),
           ") with an average of ", thresh_mean, " (SD = ", thresh_sd,
-          "), and a median of ", thresh_median, ".\n\n")
+          "), and a median of ", thresh_median, ".\n")
+
+  ## WMNSQ
+  wmnsq_min <- min(irt_sum$WMNSQ, na.rm = TRUE)
+  wmnsq_min_item <- irt_sum$Item[irt_sum$WMNSQ %in% wmnsq_min]
+  wmnsq_max <- max(irt_sum$WMNSQ, na.rm = TRUE)
+  wmnsq_max_item <- irt_sum$Item[irt_sum$WMNSQ %in% wmnsq_max]
+  wmnsq_mean <- round(mean(irt_sum$WMNSQ, na.rm = TRUE), digits)
+  wmnsq_median <- round(median(irt_sum$WMNSQ, na.rm = TRUE), digits)
+  wmnsq_sd <- round(sd(irt_sum$WMNSQ, na.rm = TRUE), digits)
+  message("\033[1mWMNSQ:\033[0m\n",
+          "The WMNSQ value varied between ", wmnsq_min, " (",
+          ifelse(length(wmnsq_min_item) > 1, "items ", "item "),
+          list_elements(wmnsq_min_item), ") and ", wmnsq_max, " (",
+          ifelse(length(wmnsq_max_item) > 1, "items ", "item "),
+          list_elements(wmnsq_max_item), ") with an average of ",
+          wmnsq_mean, " (SD = ", wmnsq_sd, "), and a median of ",
+          wmnsq_median, ".\n")
+
+  ## WMNSQ t-value
+  t_min <- min(irt_sum$t, na.rm = TRUE)
+  t_min_item <- irt_sum$Item[irt_sum$t %in% t_min]
+  t_max <- max(irt_sum$t, na.rm = TRUE)
+  t_max_item <- irt_sum$Item[irt_sum$t %in% t_max]
+  t_mean <- round(mean(irt_sum$t, na.rm = TRUE), digits)
+  t_median <- round(median(irt_sum$t, na.rm = TRUE), digits)
+  t_sd <- round(sd(irt_sum$t, na.rm = TRUE), digits)
+  message("\033[1mWMNSQ t-value:\033[0m\n",
+          "The WMNSQ t-values varied between ",
+          t_min, " (", ifelse(length(t_min_item) > 1, "items ", "item "),
+          list_elements(t_min_item), ") and ",
+          t_max, " (", ifelse(length(t_max_item) > 1, "items ", "item "),
+          list_elements(t_max_item), ") with an average of ",
+          t_mean, " (SD = ", t_sd, "), and a median of ", t_median, ".\n")
+
+  ## Correlation of item scores with total correct score
+  rit_min <- min(irt_sum$rit, na.rm = TRUE)
+  rit_min_item <- irt_sum$Item[irt_sum$rit %in% rit_min]
+  rit_max <- max(irt_sum$rit, na.rm = TRUE)
+  rit_max_item <- irt_sum$Item[irt_sum$rit %in% rit_max]
+  rit_mean <- round(mean(irt_sum$rit, na.rm = TRUE), digits)
+  rit_median <- round(median(irt_sum$rit, na.rm = TRUE), digits)
+  rit_sd <- round(sd(irt_sum$rit, na.rm = TRUE), digits)
+  message("\033[1mCorrelation of item scores with total correct score:\033[0m\n",
+          "The correlations between the item scores and the total correct scores varied between ",
+          rit_min, " (", ifelse(length(rit_min_item) > 1, "items ", "item "),
+          list_elements(rit_min_item), ") and ",
+          rit_max, " (", ifelse(length(rit_max_item) > 1, "items ", "item "),
+          list_elements(rit_max_item), ") with an average correlation of ",
+          rit_mean, " (SD = ", rit_sd, "), and a median correlation of ",
+          rit_median, ".\n")
+
+  ## Local dependency
+  aq3_min <- min(irt_sum$aQ3, na.rm = TRUE)
+  aq3_min_item <- irt_sum$Item[irt_sum$aQ3 %in% aq3_min]
+  aq3_max <- max(irt_sum$aQ3, na.rm = TRUE)
+  aq3_max_item <- irt_sum$Item[irt_sum$aQ3 %in% aq3_max]
+  aq3_mean <- round(mean(irt_sum$aQ3, na.rm = TRUE), digits)
+  aq3_median <- round(median(irt_sum$aQ3, na.rm = TRUE), digits)
+  aq3_sd <- round(sd(irt_sum$aQ3, na.rm = TRUE), digits)
+  message("\033[1mLocal dependency:\033[0m\n",
+          "The estimated aQ3 varied between ",
+          aq3_min, " (", ifelse(length(aq3_min_item) > 1, "items ", "item "),
+          list_elements(aq3_min_item), ") and ",
+          aq3_max, " (", ifelse(length(aq3_max_item) > 1, "items ", "item "),
+          list_elements(aq3_max_item), ") with an average aQ3 of ",
+          aq3_mean, " (SD = ", aq3_sd, "), and a median aQ3 of ",
+          aq3_median, ".\n")
+
+  ## Item discrimination
+  disc_min <- min(irt_sum$Discr., na.rm = TRUE)
+  disc_min_item <- irt_sum$Item[irt_sum$Discr. %in% disc_min]
+  disc_max <- max(irt_sum$Discr., na.rm = TRUE)
+  disc_max_item <- irt_sum$Item[irt_sum$Discr. %in% disc_max]
+  disc_mean <- round(mean(irt_sum$Discr., na.rm = TRUE), digits)
+  disc_median <- round(median(irt_sum$Discr., na.rm = TRUE), digits)
+  disc_sd <- round(sd(irt_sum$Discr., na.rm = TRUE), digits)
+  message("\033[1mItem discrimination:\033[0m\n",
+          "The estimated discrimination parameters varied between ",
+          disc_min, " (", ifelse(length(disc_min_item) > 1, "items ", "item "),
+          list_elements(disc_min_item), ") and ",
+          disc_max, " (", ifelse(length(disc_max_item) > 1, "items ", "item "),
+          list_elements(disc_max_item), ") with an average discrimination of ",
+          disc_mean, " (SD = ", disc_sd, "), and a median discrimination of ",
+          disc_median, ".\n")
+
+  # Problematic items
+  message("\033[1mPROBLEMATIC ITEMS\033[0m\n")
+
+  ## WMNSQ
+  wmnsq_misfit <- irt_sum$Item[irt_sum$WMNSQ >= 1.15]
+
+  message(
+    "\033[1mWMNSQ:\033[0m\n",
+    ifelse(
+      length(wmnsq_misfit) == 0,
+      "No item",
+      paste0(
+        ifelse(length(wmnsq_misfit) > 1, "Items ", "Item "),
+        list_elements(wmnsq_misfit)
+      )
+    ), " exhibited a WMNSQ of at least 1.15.\n"
+  )
+
+  ## WMNSQ t-value
+  t_misfit <- irt_sum$Item[irt_sum$t >= 8]
+
+  message(
+    "\033[1mWMNSQ t-value:\033[0m\n",
+    ifelse(
+      length(t_misfit) == 0,
+      "No item",
+      paste0(
+        ifelse(length(t_misfit) > 1, "Items ", "Item "),
+        list_elements(t_misfit)
+      )
+    ), " exhibited a t-value of at least 8.\n"
+  )
+
+  ## Correlation of item scores with total correct score:
+  rit_misfit <- irt_sum$Item[irt_sum$rit < 0.2]
+
+  message(
+    "\033[1mCorrelation of item scores with total correct score:\033[0m\n",
+    ifelse(
+      length(rit_misfit) == 0,
+      "No item",
+      paste0(
+        ifelse(length(rit_misfit) > 1, "Items ", "Item "),
+        list_elements(rit_misfit)
+      )
+    ), " exhibited an item-total correlation of less than 0.2.\n"
+  )
+
+  ## Local dependency
+  aq3_misfit <- irt_sum$Item[irt_sum$aQ3 >= 0.2]
+
+  message(
+    "\033[1mLocal dependency:\033[0m\n",
+    ifelse(
+      length(aq3_misfit) == 0,
+      "No item",
+      paste0(
+        ifelse(length(aq3_misfit) > 1, "Items ", "Item "),
+        list_elements(aq3_misfit)
+      )
+    ),  " exhibited an aQ3 of at least 0.2.\n"
+  )
+
+  # Model results
+  message("\033[1mMODEL RESULTS\033[0m\n")
+
+  ## Model variance
+  message("\033[1mModel variance:\033[0m\n",
+          "The variance of the model was estimated to be ",
+          round(model$mod$variance[1], 3),".\n")
+
+  ## Test reliability
+  eap_rel <- round(model$mod$EAP.rel[1], 3)
+  wle_rel <- round(model$wle_rel[1], 3)
+  message("\033[1mTest reliability:\033[0m\n",
+          "EAP/PV reliability = ", eap_rel, "\n",
+          "WLE reliability = ", wle_rel, "\n")
+
 }
