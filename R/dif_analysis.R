@@ -1194,7 +1194,7 @@ print_dif_summary <- function(resp, diflist, res, dif_threshold = 0.4) {
     message(
       "\033[1mMain effects in the DIF and ME model:\033[0m\n",
       "(The main effect represents the difference in latent ability between ",
-      "the two groups [first group − second group].\n",
+      "the two groups [first group - second group].\n",
       "Positive values indicate higher ability in the first group, ",
       "whereas negative values indicate higher ability in the second group.)\n"
       )
