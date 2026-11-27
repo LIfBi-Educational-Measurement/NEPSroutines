@@ -1205,7 +1205,7 @@ print_dif_summary <- function(resp, diflist, res, dif_threshold = 0.4) {
     }
 
     # problematic dif values (significant p-value, larger than pre-defined threshold)
-    message("\033[1mItems exhibiting problematic DIF (|xsi| >= ", dif_threshold, "):\033[0m\n")
+    message(bold("Items exhibiting problematic DIF (|xsi| >= ", dif_threshold, "):"), "\n")
 
     for (i  in names(res$est)) {
         message("Comparison ", i, ":")
