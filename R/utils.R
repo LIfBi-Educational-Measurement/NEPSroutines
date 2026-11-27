@@ -1003,6 +1003,17 @@ list_elements <- function(x) {
 
 }
 
+#' Internal helper: bold heading for printed summaries
+#'
+#' Bold in a console that supports text styles, plain text elsewhere (knitted
+#' documents, logs, tests), where raw escape codes would show as stray
+#' characters.
+#' @param ... character; pasted together without separator
+#' @noRd
+bold <- function(...) {
+  cli::style_bold(paste0(...))
+}
+
 # Internal helper: parse a string condition used by GetPars()/GetDif().
 # A condition is a single string such as ">1.15", ">1.15 & <1.20", or
 # "<1 | >1.2": comparison operators (=, ==, !=, <, <=, >, >=) are combined

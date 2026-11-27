@@ -590,3 +590,16 @@ test_that("check_color() validates or generates colors", {
                regexp = "number of provided colors does not match")
 
 })
+
+test_that("bold() is plain text where text styles are off", {
+
+  # Knitted documents and tests have no text styles; raw escape codes would
+  # show as stray characters there.
+  withr::local_options(cli.num_colors = 1)
+  expect_identical(as.character(bold("A ", "heading:")), "A heading:")
+
+  # In a console with styles, the heading is bold
+  withr::local_options(cli.num_colors = 256)
+  expect_match(bold("A heading:"), "\033[1m", fixed = TRUE)
+
+})
