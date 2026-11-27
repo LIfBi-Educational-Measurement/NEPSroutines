@@ -177,9 +177,9 @@ test_that("dim_summary() names the group and print_dim_summary() shows it", {
     out <- capture.output(print_dim_summary(smry))
   )
   expect_true(any(grepl("RESULTS", msgs)))
-  expect_true(any(grepl("Variance of unidimensional model:", msgs)))
-  expect_true(any(grepl("'texttype' model:", msgs, fixed = TRUE)))
-  expect_true(any(grepl("Model fit:", msgs)))
+  expect_true(any(grepl("UNIDIMENSIONAL MODEL:", msgs)))
+  expect_true(any(grepl("'TEXTTYPE' MODEL:", msgs, fixed = TRUE)))
+  expect_true(any(grepl("MODEL COMPARISON:", msgs)))
   # the goodness-of-fit table is printed
   expect_true(any(grepl("AIC", out)))
 

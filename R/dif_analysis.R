@@ -1187,14 +1187,14 @@ print_dif_summary <- function(resp, diflist, res, dif_threshold = 0.4) {
     print(res$facets)
 
     # information criteria table
-    message(bold("Information criteria:"), "\n")
+    message(bold("Model comparison:"), "\n")
     print(res$gof)
 
     # main effects table
     message(
       bold("Main effects in the DIF and ME model:"), "\n",
       "(The main effect represents the difference in latent ability between ",
-      "the two groups [first group - second group].\n",
+      "the two groups [first group - second group]. ",
       "Positive values indicate higher ability in the first group, ",
       "whereas negative values indicate higher ability in the second group.)\n"
       )
@@ -1204,7 +1204,7 @@ print_dif_summary <- function(resp, diflist, res, dif_threshold = 0.4) {
         print(res$mne[[i]])
     }
 
-    # problematic dif values (significant p-value, larger than pre-defined threshold)
+    # problematic DIF values (larger than pre-defined threshold)
     message(bold("Items exhibiting problematic DIF (|xsi| >= ", dif_threshold, "):"), "\n")
 
     for (i  in names(res$est)) {

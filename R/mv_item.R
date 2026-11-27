@@ -182,15 +182,24 @@ mv_item <- function(
 
     # Print results
     if (print) {
-        message("\nTable 1 shows missing values by item position and missing type.\n",
-                "All other tables show summary statistics over all items.\n")
-        print(mv_item$summary_table)
-        message("\nSummary for TR\n")
-        print_mvi_results(
-            mv_item,
-            name_grouping = name_grouping,
-            labels_mvs = labels_mvs
-        )
+
+      message(bold("MISSING VALUES PER ITEM\n"))
+
+      ## Table with missing values per item
+      message(bold("Missing values by item position and missing type (in %):\n"))
+      print(mv_item$summary_table$list)
+
+      ## Table with summary statistics
+      message(bold("Summary statistics over all items (in %):\n"))
+      print(mv_item$summary_table$summary)
+
+      ## Written summary for TR
+      message(bold("WRITTEN SUMMARY FOR TR\n"))
+      print_mvi_results(
+          mv_item,
+          name_grouping = name_grouping,
+          labels_mvs = labels_mvs
+      )
     }
 
     # Return results
@@ -1161,16 +1170,29 @@ print_mvi_results <- function(
             mv_max <- max(mv_i$list[[lbl]], na.rm = TRUE)
             item_min <- mv_i$list$item[mv_i$list[[lbl]] == mv_min]
             item_max <- mv_i$list$item[mv_i$list[[lbl]] == mv_max]
-            message("The proportion of ", labels_mvs[lbl], " varied between ",
-                    mv_min, "%", if(length(item_min) <= 3) {
-                        paste0(" (", ifelse(length(item_min) > 1, "items ", "item "),
-                               list_elements(item_min), ")")
-                    }, " and ",
-                    mv_max, "%", if(length(item_max) <= 3) {
-                        paste0(" (", ifelse(length(item_max) > 1, "items ", "item "),
-                               list_elements(item_max), ")")
-                    }, ".")
-
+            message(
+              "The proportion of ",
+              bold(labels_mvs[lbl]),
+              " varied between ",
+              mv_min, "%",
+              if(length(item_min) <= 3) {
+                paste0(
+                  " (",
+                  ifelse(length(item_min) > 1, "items ", "item "),
+                  list_elements(item_min), ")"
+                )
+              },
+              " and ",
+              mv_max, "%",
+              if(length(item_max) <= 3) {
+                paste0(
+                  " (",
+                  ifelse(length(item_max) > 1, "items ", "item "),
+                  list_elements(item_max), ")"
+                )
+              },
+              "."
+            )
         }
 
     } else {
@@ -1178,7 +1200,7 @@ print_mvi_results <- function(
         for (g in names(mv_i$list)[-length(names(mv_i$list))]) {
 
             n <- ifelse(is.null(mv_i$list[[g]]$stage), 4, 5)
-            message("\n", capitalize(g), ":\n")
+            message(bold("\n", capitalize(g), ":\n"))
 
             for (lbl in names(mv_i$list[[g]][-c(1:n)])) {
 
@@ -1186,21 +1208,33 @@ print_mvi_results <- function(
                 mv_max <- max(mv_i$list[[g]][[lbl]], na.rm = TRUE)
                 item_min <- mv_i$list[[g]]$item[mv_i$list[[g]][[lbl]] == mv_min]
                 item_max <- mv_i$list[[g]]$item[mv_i$list[[g]][[lbl]] == mv_max]
-                message("The proportion of ", labels_mvs[lbl], " in the ", g,
-                        " ", name_grouping, " varied between ",
-                        mv_min, "%", if(length(item_min) <= 3) {
-                            paste0(" (", ifelse(length(item_min) > 1, "items ", "item "),
-                                   list_elements(item_min), ")")
-                        }, " and ",
-                        mv_max, "%", if(length(item_max) <= 3) {
-                            paste0(" (", ifelse(length(item_max) > 1, "items ", "item "),
-                                   list_elements(item_max), ")")
-                        }, ".")
+                message(
+                  "The proportion of ",
+                  bold(labels_mvs[lbl]),
+                  " in the ", g, " ", name_grouping,
+                  " varied between ",
+                  mv_min, "%",
+                  if(length(item_min) <= 3) {
+                    paste0(
+                      " (",
+                      ifelse(length(item_min) > 1, "items ", "item "),
+                      list_elements(item_min), ")"
+                    )
+                  },
+                  " and ",
+                  mv_max, "%",
+                  if(length(item_max) <= 3) {
+                    paste0(
+                      " (",
+                      ifelse(length(item_max) > 1, "items ", "item "),
+                      list_elements(item_max), ")"
+                    )
+                  },
+                  "."
+                )
             }
         }
     }
-
-    message("\n\n")
 }
 
 #' Test mv_i for completeness
