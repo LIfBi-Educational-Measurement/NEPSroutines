@@ -108,7 +108,8 @@ exception: its design decision is taken when the v1.5.0 work starts.
   reimplementation (from `dev/linking/linking.R`, with the tests from the
   closed PR #59 as the spec) or stays out of scope. The implementation itself
   comes after July 2027. (open)
-- #117: opt-in `device` argument or new default output format (open)
+- #117 vector graphics: decided 2026-11-27 (opt-in argument that takes a
+  vector of formats; the default stays PNG only)
 - #74: warning, `strict` parameter, or keep the error (open)
 - #96: kernel and bandwidth choice, due when the v1.5.0 work starts (open)
 - #195 outdated `TblPars()` footnote: decided 2026-11-27 (remove the block;
@@ -117,9 +118,9 @@ exception: its design decision is taken when the v1.5.0 work starts.
   `Suggests` to `Imports`, or keep the current printing (open)
 - #210: whether DIF and other socio-demographic variables must be factors
   with named levels, or other variable types stay supported (open)
-- #112: reimplement `wright_map()` directly with ggplot2, or via
-  `ShinyItemAnalysis::ggWrightMap` as the issue title says; this decides
-  which dependency replaces WrightMap (open)
+- #112 `wright_map()`: decided 2026-11-27 (own ggplot2 implementation
+  modelled on `ShinyItemAnalysis::ggWrightMap()` and citing it; no new
+  dependency, WrightMap is dropped)
 
 ## v1.3.1 and v1.3.2 (patch: bugs and code health, no API changes)
 
@@ -310,8 +311,9 @@ Status: planned
 
 Status: planned
 
-- #112 reimplement `wright_map()` and drop the WrightMap dependency (approach
-  per the decision list)
+- #112 reimplement `wright_map()` with ggplot2, modelled on
+  `ShinyItemAnalysis::ggWrightMap()` (cited), and drop the WrightMap
+  dependency (as decided)
 - #176 set the Wright map size in `irt_analysis()` (do together with #112)
 - #181 opt-in `FigWrightMap()` output without the drawn footnote, so the
   report template writes the note with a Quarto cross-reference to the
@@ -321,7 +323,8 @@ Status: planned
 
 Status: planned
 
-- #117 vector graphics output for plots
+- #117 vector graphics output for plots: an opt-in argument that takes a
+  vector of formats, default PNG only (as decided)
 - #116 add `item` argument to `GetMvi()`
 - #169 confirmation messages in validation check functions (moved from
   WP 2.4 to spread the review load)
