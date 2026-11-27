@@ -1187,7 +1187,7 @@ print_dif_summary <- function(resp, diflist, res, dif_threshold = 0.4) {
     print(res$facets)
 
     # information criteria table
-    message("\033[1mInformation criteria:\033[0m\n")
+    message(bold("Information criteria:"), "\n")
     print(res$gof)
 
     # main effects table
