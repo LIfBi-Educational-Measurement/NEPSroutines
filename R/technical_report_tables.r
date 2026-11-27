@@ -636,11 +636,6 @@ TblPars <- function(obj, footnote = NULL, excl = c("N_administered"),
                    " = Average absolute residual correlation for item (Yen, 1984). "
     )
   }
-  if ("Percentage correct" %in% colnames(tab))
-    note <- append(note,
-                   paste0("Percent correct scores are not informative for polytomous ",
-                          "item scores and, therefore, are not reported. ")
-    )
   if (!is.null(footnote))
     note <- append(note, footnote)
 
