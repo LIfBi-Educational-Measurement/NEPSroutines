@@ -1177,7 +1177,7 @@ TblDif <- function(obj, footnote = NULL, excl = NULL,
   for (i in seq_along(tab)[-1]) {
     for (j in seq_along(tab[[i]])) {
       # numbers of any size, with or without decimals or an exponent; cells
-      # are padded to a common width by format() in dif_tr_tables()
+      # are padded to a common width by format() in build_dif_tr_tables()
       num <- "-?\\d+(\\.\\d+)?([eE][-+]?\\d+)?"
       ustd <- regmatches(tab[j, i], regexpr(paste0("^\\s*", num), tab[j, i]))
       std <- regmatches(tab[j, i], regexpr(paste0("(?<=\\()\\s*", num),
