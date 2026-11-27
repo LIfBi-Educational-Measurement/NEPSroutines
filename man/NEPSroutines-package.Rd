@@ -28,10 +28,10 @@ Start with the \strong{introductory vignette} by using the function \code{open_g
 Authors:
 \itemize{
   \item Jana Welling \email{jana.welling@lifbi.de}
-  \item Anna Scharl
   \item Tanja Kutscher \email{tanja.kutscher@lifbi.de}
   \item Timo Gnambs \email{timo.gnambs@lifbi.de}
   \item Matthias Kloft \email{matthias.kloft@lifbi.de}
+  \item Anna Scharl
 }
 
 Other contributors:
