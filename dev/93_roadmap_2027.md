@@ -96,8 +96,9 @@ time; most fixes in WP 1.1 and 1.2 are small reviews.
 
 ## Decisions (due 2027-01-08)
 
-Settled before coding starts, so no work package waits for them. #96 is the
-exception: its design decision is taken when the v1.5.0 work starts.
+Settled before coding starts, so no work package waits for them. #96 and #74
+are the exceptions: #96 is decided when the v1.5.0 work starts, #74 when it is
+implemented in WP 2.4.
 
 - #124 add SK and RS missing types: default name for -21 (j-welling) and the
   SUF labels for -21/-22 (j-welling, tgnambs), asked on the issue (open)
@@ -114,7 +115,9 @@ exception: its design decision is taken when the v1.5.0 work starts.
   opaque. (open)
 - #117 vector graphics: decided 2026-11-27 (opt-in argument that takes a
   vector of formats; the default stays PNG only)
-- #74: warning, `strict` parameter, or keep the error (open)
+- #74: warning, `strict` parameter, or keep the error; decided when the
+  issue is implemented in WP 2.4, on the basis of the research notes on the
+  issue (open)
 - #96: kernel and bandwidth choice, due when the v1.5.0 work starts (open)
 - #195 outdated `TblPars()` footnote: decided 2026-11-27 (remove the block;
   the reviewers confirm the removal in the PR)
