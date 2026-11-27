@@ -373,7 +373,7 @@ print_dim_summary <- function(dimsum) {
 
 
   # Model fit
-  message("\033[1mModel fit:\033[0m")
+  message(bold("Model fit:"))
   print(dimsum[["Goodness of fit"]])
 
 }
