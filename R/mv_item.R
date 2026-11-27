@@ -194,7 +194,7 @@ mv_item <- function(
       print(mv_item$summary_table$summary)
 
       ## Written summary for TR
-      message(bold("Written summary for TR:\n"))
+      message(bold("WRITTEN SUMMARY FOR TR\n"))
       print_mvi_results(
           mv_item,
           name_grouping = name_grouping,
@@ -1200,7 +1200,7 @@ print_mvi_results <- function(
         for (g in names(mv_i$list)[-length(names(mv_i$list))]) {
 
             n <- ifelse(is.null(mv_i$list[[g]]$stage), 4, 5)
-            message(bold("\n", toupper(g), "\n"))
+            message(bold("\n", capitalize(g), ":\n"))
 
             for (lbl in names(mv_i$list[[g]][-c(1:n)])) {
 
