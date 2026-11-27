@@ -49,11 +49,11 @@ There are three scopes:
       step 1 of "Create Release".
 - [ ] Results are reproduced against the previous release: manually with
       `dev/manual_test_scripts/` up to v1.3.2, with the pipeline tests from
-      v1.3.3 or v1.4.0 on (see roadmap, WP 2.2). Runs on real NEPS data (the
+      v1.3.3 on (see roadmap, WP 2.2). Runs on real NEPS data (the
       manual scripts, the local real-data tests) are done by the team; agents
       do not run them and do not see their output.
 - [ ] Spelling: up to v1.3.2, run `spelling::spell_check_package()` once in
-      the release window. From v1.3.3 or v1.4.0 on, the spell check runs on
+      the release window. From v1.3.3 on, the spell check runs on
       every PR (roadmap WP 2.1); read its report in the CI log of the same
       commit as above.
 - [ ] The example scripts in `inst/examples/` are re-rendered after the code
