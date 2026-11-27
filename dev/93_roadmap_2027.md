@@ -118,10 +118,11 @@ WP 2.3b.
 
 ## v1.3.1 and v1.3.2 (patch: bugs and code health, no API changes)
 
-No test work in these releases; tests, fixtures and pipeline tests are part of
-v1.4.0. Each fix must still leave `devtools::test()` green: a fix regenerates
-only the fixtures it breaks, and the systematic fixture work follows in
-WP 2.1.
+No systematic test work in these releases; new test infrastructure, fixture
+work and pipeline tests are part of v1.4.0. A fix may add a small regression
+test for the behaviour it changes. Each fix must still leave
+`devtools::test()` green: a fix regenerates only the fixtures it breaks, and
+the systematic fixture work follows in WP 2.1.
 
 **WP 1.1: Report output correctness** (due 2027-01-15)
 

@@ -344,10 +344,12 @@ Test targeting focuses on comparing the item difficulties with the person abilit
 #| label: fig-test-targeting
 #| 
 
+# `tbl` is the number of @tbl-parameters, written into the image note.
+# Update it if you add, remove or reorder tables before that table.
 FigWrightMap(paste0(
-  path, 
+  path,
   "plots/Wright_Maps/Wright_map_for_PCM2.png"
-))
+), tbl = {{ifre}}5{{/ifre}}{{ifma}}4{{/ifma}}{{ifdc}}4{{/ifdc}})
 
 ```
 

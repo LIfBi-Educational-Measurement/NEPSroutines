@@ -12,7 +12,12 @@ FigWright_Map(file, tbl = 5, crop = "800x1010+5+50")
 \arguments{
 \item{file}{A file path for the image.}
 
-\item{tbl}{The table number for the footnote.}
+\item{tbl}{The number of the item-parameter table that the footnote
+refers to. The footnote is drawn into the image, so Quarto cannot
+update this number; set it to match the table numbering of your report.
+The report template of \code{\link[=Setup]{Setup()}} passes the number for its domain;
+reports created with an earlier version of the template use the default
+of 5, which is wrong for mathematics and digital competence.}
 
 \item{crop}{A string indicating how to crop the image in the format
 \code{"<width>x<height>{+-}<xoffset>{+-}<yoffset>"}

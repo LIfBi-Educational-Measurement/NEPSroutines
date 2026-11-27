@@ -151,3 +151,30 @@ test_that("Update() works", {
 })
 
 
+test_that("Setup() passes the item-parameter table number to FigWrightMap()", {
+
+  for (domain in c("re", "ma", "dc")) {
+    path <- withr::local_tempdir()
+    suppressMessages(
+      Setup(path = path, ask = FALSE, sc = 4, domain = domain, study = "A104",
+            wave = 14)
+    )
+    qmd <- file.path(path, paste0("TR_A104_SC4_W14_", toupper(domain), ".qmd"))
+    txt <- readLines(qmd, warn = FALSE)
+
+    # Quarto numbers labelled tables in order of appearance
+    tbl_labels <- sub(".*label:\\s*", "",
+                      grep("#\\| label: tbl-", txt, value = TRUE))
+    expected <- match("tbl-parameters", tbl_labels)
+
+    expect_match(
+      paste(txt, collapse = "\n"),
+      paste0("Wright_map_for_PCM2.png\"\n), tbl = ", expected, ")"),
+      fixed = TRUE,
+      info = domain
+    )
+  }
+
+})
+
+
