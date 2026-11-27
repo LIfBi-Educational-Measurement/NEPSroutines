@@ -10,7 +10,7 @@ dif_summary(
   print = TRUE,
   save = TRUE,
   path = "Tables",
-  dif_threshold = 0.5,
+  dif_threshold = 0.4,
   suf_item_names = FALSE,
   overwrite = FALSE,
   name_group = NULL,
@@ -30,7 +30,7 @@ includes variable 'item' containing item names}
 \item{path}{string; defines path to folder where tables shall be saved}
 
 \item{dif_threshold}{numeric scalar; indicates absolute threshold of
-problematic DIF (defaults to 0.5)}
+problematic DIF (defaults to 0.4)}
 
 \item{suf_item_names}{logical; whether to output SUF item names in the .xlsx file
 for items with collapsed categories}

@@ -26,7 +26,7 @@ dif_analysis(
   name_group = NULL,
   verbose = FALSE,
   warn = TRUE,
-  dif_threshold = 0.5,
+  dif_threshold = 0.4,
   digits = 3
 )
 }
@@ -91,7 +91,7 @@ for items with collapsed categories}
 \item{warn}{logical; whether to print warnings (should be set to TRUE)}
 
 \item{dif_threshold}{numeric scalar; indicates absolute threshold of
-problematic DIF (defaults to 0.5)}
+problematic DIF (defaults to 0.4)}
 
 \item{digits}{integer; number of decimals for rounding}
 }

@@ -8,7 +8,7 @@ summarize_dif_analysis(
   dif_models,
   dif_vars,
   vars,
-  dif_threshold = 0.5,
+  dif_threshold = 0.4,
   print = TRUE,
   save = TRUE,
   overwrite = FALSE,
@@ -28,7 +28,7 @@ for DIF (e.g., "gender")}
 includes variable 'item' containing item names}
 
 \item{dif_threshold}{numeric scalar; indicates absolute threshold of
-problematic DIF (defaults to 0.5)}
+problematic DIF (defaults to 0.4)}
 
 \item{print}{logical; whether results shall be printed to console}
 
