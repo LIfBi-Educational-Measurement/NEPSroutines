@@ -375,15 +375,25 @@ irt_analysis <- function(
 
   # Print results
   if (print)  {
-    message("\nIRT summary table\n")
-    print(irt$summary)
-    message("\nModel fit table\n")
+
+    message(bold("\nMODEL COMPARISON\n"))
     print(irt$model_fit)
+
+    message(
+      "Note: All following results (excluding only the item discrimination ",
+      "parameters) are extracted from the ",
+      ifelse(irt_type == 'poly', "PCM", "1PL"),
+      " model.\n"
+    )
+
+    message(bold("ITEM FIT STATISTICS FOR EACH ITEM\n"))
+    print(irt$summary)
+
     if (irt_type == 'poly') {
-      message("\nSteps analysis table\n")
+      message(bold("STEPS ANALYSIS\n"))
       print(irt$steps)
     }
-    message("\nSUMMARY FOR TR\n")
+
     print_irt_summary(
       model = irt[[1]],
       irt_sum = irt$summary,
