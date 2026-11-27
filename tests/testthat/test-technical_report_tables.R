@@ -724,7 +724,22 @@ test_that("TblCode() works", {
   expect_true(any(grepl('^  "reg70001_c"', code)))
   expect_true(any(grepl("^# polytomous items$", code)))
   expect_true(any(grepl("TAM::tam.mml\\(resp = dat\\[, items\\], Q = Q", code)))
+  expect_true(any(grepl('irtmodel = "PCM2"', code, fixed = TRUE)))
   expect_equal(tail(code, 1), "TAM::tam.wle(mod)")
+
+})
+
+
+test_that("TblCode() estimates a Rasch model for dichotomous items", {
+
+  data("ex3")
+
+  code <- TblCode(vars = ex3$vars, select = "dich", tbl = FALSE)
+
+  expect_false(any(grepl("^# polytomous items$", code)))
+  expect_true(any(grepl("^# estimate Rasch model$", code)))
+  expect_true(any(grepl('irtmodel = "1PL"', code, fixed = TRUE)))
+  expect_false(any(grepl("PCM2", code, fixed = TRUE)))
 
 })
 
