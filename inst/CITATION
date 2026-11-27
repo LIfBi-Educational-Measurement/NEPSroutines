@@ -1,9 +1,8 @@
-author_list <- c(
-  utils::person(family = "Welling", given = "Jana"),
-  utils::person(given = "Anna", family = "Scharl"),
-  utils::person(given = "Tanja", family = "Kutscher"),
-  utils::person(given = "Timo", family = "Gnambs")
-)
+# Authors (role "aut") in the order of Authors@R in DESCRIPTION
+author_list <- eval(str2expression(meta$`Authors@R`))
+author_list <- author_list[
+  vapply(author_list, \(p) "aut" %in% p$role, logical(1))
+]
 year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date, perl = TRUE)
 pkg_name <- meta$Package
 pkg_title <- meta$Title
