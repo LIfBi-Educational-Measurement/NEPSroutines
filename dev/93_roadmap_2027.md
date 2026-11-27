@@ -90,8 +90,9 @@ time; most fixes in WP 1.1 and 1.2 are small reviews.
 
 ## Decisions (due 2027-01-08)
 
-Settled before coding starts, so no work package waits for them. #96 is the
-exception: its design decision is taken at the start of WP 2.3b.
+Settled before coding starts, so no work package waits for them. #96 and
+#194 are the exceptions: their design decisions are taken at the start of
+WP 2.3b.
 
 - #124 add SK and RS missing types: domain answer (open)
 - #129 review `survey_paper.bib` template: domain answer (open)
@@ -106,6 +107,11 @@ exception: its design decision is taken at the start of WP 2.3b.
 - #117: opt-in `device` argument or new default output format (open)
 - #74: warning, `strict` parameter, or keep the error (open)
 - #96: kernel and bandwidth choice, due at the start of WP 2.3b (open)
+- #195: remove the outdated `TblPars()` footnote on percent correct for
+  polytomous items, or rewrite it, which changes the table in every report
+  with polytomous items (open)
+- #194: fixed cut-offs for the aQ3 and rit flags or arguments, due at the
+  start of WP 2.3b (open)
 - #112: reimplement `wright_map()` directly with ggplot2, or via
   `ShinyItemAnalysis::ggWrightMap` as the issue title says; this decides
   which dependency replaces WrightMap (open)
@@ -124,6 +130,8 @@ Status: planned
 - #131 Wright map footnote hardcodes "Table 5"
 - #142 `TblCode()` does not define the Rasch model
 - #154 sum-0 cell in `steps_analysis()` ignores `digits`
+- #189 `TblDif()` and `TblCode()` misread numbers of 10 or more (found in
+  the audit after #154)
 - #152 `TblCode()` `tam.fit()` mismatch, plus the "Monte Carlo" wording in
   `vignettes/dimensionality_analyses.Rmd`; regenerating the stale ex2
   fixtures is split out as #179 (WP 2.1)
@@ -171,10 +179,14 @@ Status: planned
 Status: planned
 
 - #162 data preparation in the example scripts (j-welling is working on it)
+- #185 how to prepare the school variable, in the `prepare_data` vignette
+  and the example scripts `dat1` and `dat2` (tgnambs)
 - #167 update README
 - #124 add SK and RS missing types (as decided)
 - #129 fix the `survey_paper.bib` template (as decided)
 - #173 birth-year replacement in `calculate_age`, if decided for v1.3.2
+- #195 outdated `TblPars()` footnote on percent correct for polytomous
+  items, which never prints (as decided; found in the review of #177)
 
 **Release v1.3.2** (2027-03-05 to 2027-03-19)
 
@@ -286,6 +298,8 @@ Status: planned
 - #116 add `item` argument to `GetMvi()`
 - #169 confirmation messages in validation check functions (moved from
   WP 2.4 to spread the review load)
+- #194 printed IRT summary: aQ3 summary and items flagged by aQ3 > .20 or
+  rit < .20 (split out of #177)
 - #96 opt-in kernel smoothing for empirical ICC curves; first decide the
   kernel and how the bandwidth is chosen, then build it on the reworked plot
   code. If the schedule slips, #96 moves after July 2027 first.
@@ -315,3 +329,9 @@ restructuring of the package (such as #119) comes after July 2027.
   `.tiff` files (no re-fitting). This would remove the kind of fixture drift
   behind #158 and #152, but it changes the shipped template, so it belongs in
   a major version. No issue yet.
+- #188 store unrounded numbers in the `.xlsx` output and round once, at
+  display time, in the `Tbl*()` functions. This removes double rounding and
+  parsing numbers back out of text (worked around in #187 and #190). It
+  changes the saved output format, so it needs a decision with the
+  co-authors first. Placed here provisionally; it is closely related to the
+  report template item above.
