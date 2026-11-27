@@ -1200,7 +1200,7 @@ print_mvi_results <- function(
         for (g in names(mv_i$list)[-length(names(mv_i$list))]) {
 
             n <- ifelse(is.null(mv_i$list[[g]]$stage), 4, 5)
-            message(capitalize(g), ":\n")
+            message(bold("\n", toupper(g), "\n"))
 
             for (lbl in names(mv_i$list[[g]][-c(1:n)])) {
 
