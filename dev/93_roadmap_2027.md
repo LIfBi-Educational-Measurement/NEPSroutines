@@ -109,6 +109,10 @@ exception: its design decision is taken at the start of WP 2.3b.
 - #195: remove the outdated `TblPars()` footnote on percent correct for
   polytomous items, or rewrite it, which changes the table in every report
   with polytomous items (open)
+- #208: print tables with `knitr::kable()`, which moves `knitr` from
+  `Suggests` to `Imports`, or keep the current printing (open)
+- #210: whether DIF and other socio-demographic variables must be factors
+  with named levels, or other variable types stay supported (open)
 - #112: reimplement `wright_map()` directly with ggplot2, or via
   `ShinyItemAnalysis::ggWrightMap` as the issue title says; this decides
   which dependency replaces WrightMap (open)
@@ -138,6 +142,13 @@ Status: planned
   v1.3.0
 - #194 printed IRT summary: aQ3 summary and items flagged by aQ3 of at least
   .20 or rit < .20, with fixed cut-offs (split out of #177; done in #193)
+- #212 warning "number of rows of result is not a multiple of vector length"
+  in the distractor analysis (`cbind()` of correct responses and distractors)
+- Printed output of the analysis functions reworked by j-welling: headings,
+  bold (sub)headings and explanations in `irt_analysis()`, `dif_analysis()`,
+  `dis_analysis()`, `dim_analysis()` and the missing-value analyses (#193,
+  #197, #198, #201, #209, #214; done). Bold headings use `cli`, so they print
+  as plain text in knitted documents (#205; done).
 - Add a `NEWS.md`, with earlier versions taken from the existing GitHub
   release notes. Needed for the v1.3.1 release checklist. Copying the GitHub
   release text from it is part of the proposed `CONTRIBUTING` changes (see
@@ -301,6 +312,27 @@ Status: planned
 - #96 opt-in kernel smoothing for empirical ICC curves; first decide the
   kernel and how the bandwidth is chosen, then build it on the reworked plot
   code. If the schedule slips, #96 moves after July 2027 first.
+
+**WP 2.5: Printed output** (due date to be set)
+
+Status: planned
+
+Follows the printed-output rework in v1.3.1 (see WP 1.1). These change
+printed output on purpose, so each change is listed in `NEWS.md` (rule 2
+above). No due date yet: if the work does not fit before the v1.4.0 code
+freeze, it moves after July 2027.
+
+- #211 descriptive statistics: show the values as row names in the tables
+  of item types and missing values
+- #210 labels of socio-demographic variables in descriptive statistics and
+  DIF output, e.g. DIF variables as factors with named levels (decision on
+  the decision list; builds on #139 in WP 1.2)
+- #208 print output tables with `knitr::kable()` (decision on the decision
+  list); review the column and row names at the same time
+- #207 highlight problematic values (e.g. WMNSQ > 1.15) and the best
+  information criteria in printed output; the cut-offs follow #199
+- #213 bold headings also in rendered R Markdown, which currently show them
+  as plain text (see #205)
 
 **Release v1.4.0** (2027-07-16 to 2027-07-30)
 
