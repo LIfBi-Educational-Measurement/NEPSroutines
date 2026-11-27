@@ -349,13 +349,19 @@ dim_summary <- function(dimensionality, save = FALSE, name_group = NULL,
 #' @export
 print_dim_summary <- function(dimsum) {
 
+  message(bold("RESULTS\n"))
+
   message(
     "Note: An unidimensional model can be assumed if correlations between ",
     "subdimensions are high (> 0.95) and the unidimensional model fits the data ",
     "better than the multidimensional model, see Pohl & Carstensen (2012).\n"
   )
 
-  # Variance of unidimensional model
+  # Model comparison
+  message(bold("MODEL COMPARISON:"))
+  print(dimsum[["Goodness of fit"]])
+
+  # Variance in unidimensional model
   message(bold("Variance in UNIDIMENSIONAL MODEL:"))
   print(dimsum[["Cor-Var uni"]])
 
@@ -369,10 +375,4 @@ print_dim_summary <- function(dimsum) {
     ))
     print(dimsum[[multi]])
   }
-
-
-  # Model fit
-  message(bold("MODEL COMPARISON:"))
-  print(dimsum[["Goodness of fit"]])
-
 }
