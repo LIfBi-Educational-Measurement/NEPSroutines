@@ -99,15 +99,19 @@ time; most fixes in WP 1.1 and 1.2 are small reviews.
 Settled before coding starts, so no work package waits for them. #96 is the
 exception: its design decision is taken when the v1.5.0 work starts.
 
-- #124 add SK and RS missing types: domain answer (open)
-- #129 review `survey_paper.bib` template: domain answer (open)
+- #124 add SK and RS missing types: default name for -21 (j-welling) and the
+  SUF labels for -21/-22 (j-welling, tgnambs), asked on the issue (open)
+- #129 review `survey_paper.bib` template: decided 2026-11-27 (Claude Code
+  proposes the corrections with sources in a PR; the co-authors approve them)
 - #168 author order: decided 2026-11-26 (keep the current order; see issue comment)
 - #173 birth-year replacement in `calculate_age`: decided 2026-11-27
   (implement as described in the issue, in v1.4.0, WP 2.4)
 - #11 linking: decide whether linking returns to the package as a
   reimplementation (from `dev/linking/linking.R`, with the tests from the
   closed PR #59 as the spec) or stays out of scope. The implementation itself
-  comes after July 2027. (open)
+  comes after July 2027. To be discussed with tgnambs; the maintainers lean
+  against adding many wrapper functions, because they make the workflow
+  opaque. (open)
 - #117 vector graphics: decided 2026-11-27 (opt-in argument that takes a
   vector of formats; the default stays PNG only)
 - #74: warning, `strict` parameter, or keep the error (open)
@@ -199,7 +203,8 @@ Status: planned
   and the example scripts `dat1` and `dat2` (tgnambs)
 - #167 update README
 - #124 add SK and RS missing types (as decided)
-- #129 fix the `survey_paper.bib` template (as decided)
+- #129 fix the `survey_paper.bib` template: corrections with sources in a
+  PR, approved by the co-authors (as decided)
 - #195 outdated `TblPars()` footnote on percent correct for polytomous
   items, which never prints (as decided; found in the review of #177)
 
