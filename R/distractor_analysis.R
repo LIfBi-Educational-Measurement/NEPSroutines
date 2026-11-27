@@ -293,10 +293,12 @@ dis_summary <- function(
 
     rc <- res[sel,]
     rd <- res[!sel,]
-    desc <- describe(
-      cbind(correct = rc[, 3], distract = rd[, 3]),
-      digits = digits
-    )[,-1] |> t()
+    # Describe each set separately: there are usually more distractors than
+    # correct responses, so a joint data.frame would recycle values (#212)
+    desc <- rbind(
+      describe(data.frame(correct = rc$corr), digits = digits),
+      describe(data.frame(distract = rd$corr), digits = digits)
+    )[, -1] |> t()
 
     # Create list with results
     results <- list(correct = rc, distractor = rd, descriptives = desc)
