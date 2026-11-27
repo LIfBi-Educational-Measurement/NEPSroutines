@@ -645,6 +645,28 @@ test_that("steps_analysis() writes the constrained last step without an SE", {
 })
 
 
+test_that("steps_analysis() rounds the constrained last step to `digits`", {
+
+  # The rounded steps sum to about 5.55e-17 in floating point; the constrained
+  # step must still print in fixed-point notation with `digits` decimals (#154).
+  xsi <- data.frame(
+    xsi    = c(-1.45, 1.38, 0.07),
+    se.xsi = c(0.07, 0.08, 0.09)
+  )
+  rownames(xsi) <- paste0("itemA_step", 1:3)
+
+  steps <- steps_analysis(list(mod = list(xsi = xsi)), digits = 2, save = FALSE)
+  expect_equal(steps["itemA", "step4"], "0.00")
+
+  # The constrained step is the negative sum of the rounded, printed steps,
+  # so the printed row sums to zero. The unrounded steps would give -0.01.
+  xsi$xsi <- c(-1.446, 1.384, 0.074)
+  steps <- steps_analysis(list(mod = list(xsi = xsi)), digits = 2, save = FALSE)
+  expect_equal(steps["itemA", "step4"], "0.00")
+
+})
+
+
 test_that("steps_analysis() does not warn on non-step xsi rownames", {
 
   # xsi holds one row per item plus one per step; selecting steps by coercing

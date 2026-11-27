@@ -689,7 +689,8 @@ TblPars <- function(obj, footnote = NULL, excl = c("N_administered"),
 #'
 #' @param obj A list with data frames with sheets from "irt_poly.xlsx"
 #' or sheet "steps" from "irt_poly.xlsx" created by [irt_analysis()].
-#' @param digits A number for rounding.
+#' @param digits A number for rounding. The constrained last step of each item
+#' is computed from the rounded steps, so each printed row sums to zero.
 #' @param ... Further arguments passed to [Tbl()].
 #' @returns A flextable.
 #' @inheritParams Tbl
@@ -743,19 +744,43 @@ TblSteps <- function(obj, footnote = NULL, size = 10, width = 1, digits = 2,
     tab$Item <- sub("_collapsed$", "", tab$Item)
   }
 
-  # Rounding
-  for (i in seq_along(tab)[-1]) {
-    for (j in seq_along(tab[[i]])) {
-      thr <- regmatches(tab[j, i], regexpr("^\\-?\\d\\.\\d+", tab[j, i]))
-      se <- regmatches(tab[j, i], regexpr("(?<=\\()\\d\\.\\d+", tab[j, i],
-                       perl = TRUE))
+  # Rounding: round the estimated steps (cells with an SE), then derive the
+  # constrained step (the cell without an SE) from the rounded steps instead of
+  # rounding it again, so the printed row sums to zero for any `digits` (#154)
+  for (j in seq_len(nrow(tab))) {
+    rounded <- numeric(0)
+    parsed <- TRUE
+    constrained <- NULL
+    for (i in seq_along(tab)[-1]) {
+      cell <- tab[j, i]
+      if (is.na(cell)) next
+      if (!grepl("(", cell, fixed = TRUE)) {
+        constrained <- i
+        next
+      }
+      # numbers of any size, with or without decimals or an exponent
+      num <- "-?\\d+(\\.\\d+)?([eE][-+]?\\d+)?"
+      thr <- regmatches(cell, regexpr(paste0("^\\s*", num), cell))
+      se <- regmatches(cell, regexpr(paste0("(?<=\\()\\s*", num), cell,
+                                     perl = TRUE))
       step <- NA
-      if (length(thr == 1L)) {
+      if (length(thr) == 1L) {
         step <- rnd(as.numeric(thr), digits = digits)
+        rounded <- c(rounded, as.numeric(gsub(",", "", step, fixed = TRUE)))
         if (length(se) == 1L)
           step <- paste0(step, " (", rnd(as.numeric(se), digits = digits), ")")
+      } else {
+        parsed <- FALSE
       }
       tab[j, i] <- step
+    }
+    if (!is.null(constrained)) {
+      # adding 0 turns a negative zero into 0, so an exact 0 never prints -0.00
+      tab[j, constrained] <- if (parsed) {
+        rnd(round(-sum(rounded), digits) + 0, digits = digits)
+      } else {
+        NA
+      }
     }
   }
 

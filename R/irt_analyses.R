@@ -1039,10 +1039,12 @@ steps_analysis <- function(
     pars[step$item[i], step$step[i]] <- step$xsi[i]
   }
 
-  # sum 0 constraint for last step
+  # sum 0 constraint for last step, computed from the rounded steps shown in
+  # the table so the printed row sums to zero; round again to drop the
+  # floating-point residue, which format() would print in scientific notation
   for (i in seq_len(nrow(steps))) {
     steps[i, seq_len(ncol(steps))[is.na(pars[i, ])][1]] <-
-      format(-1 * sum(pars[i, ], na.rm = TRUE), nsmall = digits)
+      format(round(-1 * sum(pars[i, ], na.rm = TRUE), digits), nsmall = digits)
   }
 
   # convert to data.frame

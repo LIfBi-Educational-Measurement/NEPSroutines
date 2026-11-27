@@ -282,6 +282,60 @@ test_that("TblSteps() works", {
 })
 
 
+test_that("TblSteps() derives the constrained step from the rounded steps", {
+
+  skip_if_not_installed("flextable")
+  skip_if_not_installed("officer")
+
+  # steps_analysis() writes 3 decimals; rounding each cell to 2 decimals on its
+  # own would print 1.27 / -1.61 / 0.33, which sums to -0.01 (#154). The second
+  # row is an old (v1.3.0) cell in scientific notation, which printed as 5.55.
+  tab <- data.frame(
+    item  = c("itemA", "itemB"),
+    step1 = c("1.274 (0.050)", "-1.450 (0.070)"),
+    step2 = c("-1.608 (0.060)", "1.380 (0.080)"),
+    step3 = c("0.334", "0.070 (0.090)"),
+    step4 = c(NA, "5.551115e-17")
+  )
+  tbl <- TblSteps(tab)$body$dataset
+
+  expect_equal(unlist(tbl[1, -1], use.names = FALSE),
+               c("1.27 (0.05)", "-1.61 (0.06)", "0.34", NA))
+  expect_equal(unlist(tbl[2, -1], use.names = FALSE),
+               c("-1.45 (0.07)", "1.38 (0.08)", "0.07 (0.09)", "0.00"))
+
+  # The constrained step follows `digits`
+  tbl3 <- TblSteps(tab, digits = 3)$body$dataset
+  expect_equal(tbl3[["Step 3"]][1], "0.334")
+
+})
+
+
+test_that("TblSteps() reads values of any size", {
+
+  skip_if_not_installed("flextable")
+  skip_if_not_installed("officer")
+
+  # Values of 10 or more, without decimals (digits = 0) or in scientific
+  # notation used to print as empty cells.
+  tab <- data.frame(
+    item  = c("itemA", "itemB", "itemC"),
+    step1 = c("12.345 (10.456)", "2 (0)", "1e-04 (0.0500)"),
+    step2 = c("-1.346 (0.456)", "-1 (1)", "-0.5000 (0.0500)"),
+    step3 = c("-11", "-1", "0.4999")
+  )
+  tbl <- TblSteps(tab)$body$dataset
+
+  expect_equal(unlist(tbl[1, -1], use.names = FALSE),
+               c("12.35 (10.46)", "-1.35 (0.46)", "-11.00"))
+  expect_equal(unlist(tbl[2, -1], use.names = FALSE),
+               c("2.00 (0.00)", "-1.00 (1.00)", "-1.00"))
+  expect_equal(unlist(tbl[3, -1], use.names = FALSE),
+               c("0.00 (0.05)", "-0.50 (0.05)", "0.50"))
+
+})
+
+
 test_that("TblDim() works", {
 
   skip_if_not_installed("flextable")
