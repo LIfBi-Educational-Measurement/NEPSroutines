@@ -376,7 +376,7 @@ irt_analysis <- function(
   # Print results
   if (print)  {
 
-    message(bold("\nMODEL COMPARISON\n"))
+    message(bold("MODEL COMPARISON\n"))
     print(irt$model_fit)
 
     message(
