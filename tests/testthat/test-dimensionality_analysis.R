@@ -171,13 +171,16 @@ test_that("dim_summary() names the group and print_dim_summary() shows it", {
   expect_false(file.exists(file.path(path, "dimensionality.xlsx")))
   expect_equal(names(Import(path, "dimensionality_easy.xlsx")), names(smry))
 
-  # print_dim_summary() announces the results and prints every sheet, so both
-  # the message and the printed output have to be captured. It emits a trailing
-  # blank message as well, which capture_messages() absorbs along with the
-  # header instead of letting it surface as suite noise.
+  # print_dim_summary() writes a heading per sheet as a message and prints the
+  # sheet itself, so both the messages and the printed output are captured.
   msgs <- testthat::capture_messages(
-    expect_output(print_dim_summary(smry), "Goodness of fit")
+    out <- capture.output(print_dim_summary(smry))
   )
   expect_true(any(grepl("RESULTS", msgs)))
+  expect_true(any(grepl("Variance of unidimensional model:", msgs)))
+  expect_true(any(grepl("'texttype' model:", msgs, fixed = TRUE)))
+  expect_true(any(grepl("Model fit:", msgs)))
+  # the goodness-of-fit table is printed
+  expect_true(any(grepl("AIC", out)))
 
 })
