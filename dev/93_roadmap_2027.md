@@ -300,6 +300,9 @@ Status: planned
 - #112 reimplement `wright_map()` and drop the WrightMap dependency (approach
   per the decision list)
 - #176 set the Wright map size in `irt_analysis()` (do together with #112)
+- #181 opt-in `FigWrightMap()` output without the drawn footnote, so the
+  report template writes the note with a Quarto cross-reference to the
+  item-parameter table (follow-up to #131)
 
 **WP 2.3b: Plot output and small additions** (due 2027-07-09)
 
@@ -343,7 +346,8 @@ freeze, it moves after July 2027.
 ## After July 2027 (to be decided)
 
 Not yet planned: releases, versions and dates are decided later. All
-restructuring of the package (such as #119) comes after July 2027.
+restructuring of the package (such as #119) comes after July 2027. The issues
+in this section have the GitHub milestone "Backlog (after July 2027)".
 
 - #119 lightweight S3 class layer for result objects (groundwork for #11 and
   #120)
