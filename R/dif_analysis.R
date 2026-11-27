@@ -1180,7 +1180,7 @@ print_dif_summary <- function(resp, diflist, res, dif_threshold = 0.4) {
 
     dif_var <- diflist$dif_var
 
-    message("\033[1mRESULTS FOR THE DIF VARIABLE '", toupper(dif_var), "'\033[0m\n")
+    message(bold("RESULTS FOR THE DIF VARIABLE '", toupper(dif_var), "'"), "\n")
 
     # facets and group counts
     message("\033[1mFacets and group counts:\033[0m\n")
