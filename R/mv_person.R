@@ -771,8 +771,8 @@ test_mvp_data <- function(mv_p, grouping, mvs) {
 print_mvp_results <- function(mv_p) {
 
   message(
-    bold("MISSING VALUES PER PERSON\n"),
-    "The table(s) show the summary statistics for the number of items with a ",
+    bold("\nMISSING VALUES PER PERSON\n"),
+    "The table shows the summary statistics for the number of items with a ",
     "certain missing value type per person across the whole test."
   )
 

@@ -183,7 +183,7 @@ mv_item <- function(
     # Print results
     if (print) {
 
-      message(bold("MISSING VALUES PER ITEM\n"))
+      message(bold("\nMISSING VALUES PER ITEM\n"))
 
       ## Table with missing values per item
       message(bold("Missing values by item position and missing type (in %):\n"))

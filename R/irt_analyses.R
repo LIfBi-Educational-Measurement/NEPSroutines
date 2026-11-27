@@ -380,7 +380,7 @@ irt_analysis <- function(
     print(irt$model_fit)
 
     message(
-      "Note: All following results (excluding only the item discrimination ",
+      "Note: All following results (except for the item discrimination ",
       "parameters) are extracted from the ",
       ifelse(irt_type == 'poly', "PCM", "1PL"),
       " model.\n"

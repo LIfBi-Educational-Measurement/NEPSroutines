@@ -324,7 +324,7 @@ print_dis_summary <- function(dist_sum) {
     # correct responses as well as respective item names [print to console!]
 
     # Summary
-    message(bold("SUMMARY"), "\n")
+    message(bold("\nSUMMARY"), "\n")
 
     ## Correct responses
     corr_min <- min(rc$corr)
