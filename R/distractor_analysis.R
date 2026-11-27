@@ -317,12 +317,16 @@ dis_summary <- function(
 #' @param dist_sum return object of dis_summary()
 #' @export
 print_dis_summary <- function(dist_sum) {
+
     rc <- dist_sum$correct
     rd <- dist_sum$distractor
     # short summary containing minimum and maximum for distractors and
     # correct responses as well as respective item names [print to console!]
 
-    # Correct responses
+    # Summary
+    message("\033[1mSUMMARY\033[0m\n")
+
+    ## Correct responses
     corr_min <- min(rc$corr)
     corr_min_names <- rownames(rc[which(rc$corr == corr_min),])
     corr_max <- max(rc$corr)
@@ -330,12 +334,12 @@ print_dis_summary <- function(dist_sum) {
     corr_med <- median(rc$corr)
     corr_med_names <- rownames(rc[which(rc$corr == corr_med),])
 
-    message("\nItem-total correlation for correct response: ",
+    message("\033[1mItem-total correlation for correct response:\033[0m",
             "\nMin. = ",  corr_min, " (", list_elements(corr_min_names), ")",
             "\nMax. = ",  corr_max, " (", list_elements(corr_max_names), ")",
-            "\nMd. = ",  corr_med, " (", list_elements(corr_med_names), ")")
+            "\nMd. = ",  corr_med, " (", list_elements(corr_med_names), ")\n")
 
-    # Distractors
+    ## Distractors
     dist_min <- min(rd$corr)
     dist_min_names <- rownames(rd[which(rd$corr == dist_min),])
     dist_max <- max(rd$corr)
@@ -343,25 +347,26 @@ print_dis_summary <- function(dist_sum) {
     dist_med <- median(rd$corr)
     dist_med_names <- rownames(rd[which(rd$corr == dist_med),])
 
-    message("\nItem-total correlation for distractor: ",
+    message("\033[1mItem-total correlation for distractor:\033[0m",
             "\nMin. = ",  dist_min, " (", list_elements(dist_min_names), ")",
             "\nMax. = ",  dist_max, " (", list_elements(dist_max_names), ")",
-            "\nMd. = ",  dist_med, " (", list_elements(dist_med_names),
-            ")\n")
+            "\nMd. = ",  dist_med, " (", list_elements(dist_med_names), ")\n")
 
     # Show problematic distractors and correct responses
+    message("\033[1mPROBLEMATIC ITEMS\033[0m\n")
+
     problematic_correct_responses <- rownames(rc[which(rc$corr < 0.2),])
     problematic_distractors <- rownames(rd[which(rd$corr > 0.05),])
 
     if (length(problematic_correct_responses) >= 1) {
-      message("\nItems with problematic item-total correlations for correct ",
-            "response (r < 0.2): \n",
-            paste0(problematic_correct_responses, collapse = ", "))
+      message("\033[1mItems with problematic item-total correlations for ",
+              "correct response (r < 0.2):\033[0m\n",
+              paste0(problematic_correct_responses, collapse = ", "))
     }
 
     if (length(problematic_distractors) >= 1) {
-      message("\nItems with problematic item-total correlations for ",
-              "distractors (r > 0.05): \n",
+      message("\033[1mItems with problematic item-total correlations for ",
+              "distractors (r > 0.05):\033[0m\n",
               paste0(problematic_distractors, collapse = ", "), "\n\n")
     }
 }
