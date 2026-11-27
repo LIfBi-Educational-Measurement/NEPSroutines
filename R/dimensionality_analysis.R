@@ -360,11 +360,14 @@ print_dim_summary <- function(dimsum) {
   message("\033[1mVariance of unidimensional model:\033[0m")
   print(dimsum[["Cor-Var uni"]])
 
-  # Variance-covariance matrix of multidimensional models
-  for (multi in names(dimsum)[-c(1,length(dimsum))])
+  # Correlations (variances on the diagonal) of multidimensional models
+  for (multi in setdiff(names(dimsum), c("Cor-Var uni", "Goodness of fit")) )
   {
     model <- sub(".* ", "", multi)
-    message("\033[1mVariance-covariance matrix of '", model, "' model:\033[0m")
+    message(
+      "\033[1mCorrelations (variances on the diagonal) of '",
+      model, "' model:\033[0m"
+    )
     print(dimsum[[multi]])
   }
 
