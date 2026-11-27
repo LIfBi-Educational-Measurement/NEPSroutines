@@ -1086,7 +1086,7 @@ steps_analysis <- function(
 print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
 
   # Item fit
-  message("\033[1mSUMMARY OF ITEM FIT\033[0m\n")
+  message(bold("SUMMARY OF ITEM FIT"), "\n")
 
   ## Table
   stats <- irt_sum[names(irt_sum) != "Item"]
@@ -1110,7 +1110,7 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
   pc_sd <- round(sd(irt_sum$correct, na.rm = TRUE), digits)
   max_score <- apply(model$mod$resp, 2, max, na.rm = TRUE)
   poly_items <- names(max_score)[max_score > 1]
-  message("\033[1mPercentage correct:\033[0m\n",
+  message(bold("Percentage correct:"), "\n",
           "The percentage of correct responses varied between ",
           pc_min, "% (", ifelse(length(pc_min_item) > 1, "items ", "item "),
           list_elements(pc_min_item), ") and ",
@@ -1133,7 +1133,7 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
   xsi_mean <- round(mean(irt_sum$xsi, na.rm = TRUE), digits)
   xsi_median <- round(median(irt_sum$xsi, na.rm = TRUE), digits)
   xsi_sd <- round(sd(irt_sum$xsi, na.rm = TRUE), digits)
-  message("\033[1mItem difficulties:\033[0m\n",
+  message(bold("Item difficulties:"), "\n",
           "The estimated item difficulties (or location parameters for polytomous variables) varied between ",
           xsi_min, " (", ifelse(length(xsi_min_item) > 1, "items ", "item "),
           list_elements(xsi_min_item), ") and ",
@@ -1145,7 +1145,7 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
   ## SE of item difficulties
   se_max <- max(irt_sum$SE, na.rm = TRUE)
   se_max_item <- irt_sum$Item[irt_sum$SE %in% se_max]
-  message("\033[1mSE of item difficulties:\033[0m\n",
+  message(bold("SE of item difficulties:"), "\n",
           "The maximum of SEs is ", se_max,
           " (", ifelse(length(se_max_item) > 1, "items ", "item "),
           list_elements(se_max_item), ").\n")
@@ -1159,7 +1159,7 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
   thresh_mean <- round(mean(thresholds, na.rm = TRUE), digits)
   thresh_median <- round(median(thresholds, na.rm = TRUE), digits)
   thresh_sd <- round(sd(thresholds, na.rm = TRUE), digits)
-  message("\033[1mThresholds:\033[0m\n",
+  message(bold("Thresholds:"), "\n",
           "The estimated thresholds varied between ", round(thresh_min, digits),
           " (", ifelse(length(thresh_min_item) > 1, "items ", "item "),
           list_elements(thresh_min_item), ") and ", round(thresh_max, digits),
@@ -1176,7 +1176,7 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
   wmnsq_mean <- round(mean(irt_sum$WMNSQ, na.rm = TRUE), digits)
   wmnsq_median <- round(median(irt_sum$WMNSQ, na.rm = TRUE), digits)
   wmnsq_sd <- round(sd(irt_sum$WMNSQ, na.rm = TRUE), digits)
-  message("\033[1mWMNSQ:\033[0m\n",
+  message(bold("WMNSQ:"), "\n",
           "The WMNSQ value varied between ", wmnsq_min, " (",
           ifelse(length(wmnsq_min_item) > 1, "items ", "item "),
           list_elements(wmnsq_min_item), ") and ", wmnsq_max, " (",
@@ -1193,7 +1193,7 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
   t_mean <- round(mean(irt_sum$t, na.rm = TRUE), digits)
   t_median <- round(median(irt_sum$t, na.rm = TRUE), digits)
   t_sd <- round(sd(irt_sum$t, na.rm = TRUE), digits)
-  message("\033[1mWMNSQ t-value:\033[0m\n",
+  message(bold("WMNSQ t-value:"), "\n",
           "The WMNSQ t-values varied between ",
           t_min, " (", ifelse(length(t_min_item) > 1, "items ", "item "),
           list_elements(t_min_item), ") and ",
@@ -1209,7 +1209,7 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
   rit_mean <- round(mean(irt_sum$rit, na.rm = TRUE), digits)
   rit_median <- round(median(irt_sum$rit, na.rm = TRUE), digits)
   rit_sd <- round(sd(irt_sum$rit, na.rm = TRUE), digits)
-  message("\033[1mCorrelation of item scores with total correct score:\033[0m\n",
+  message(bold("Correlation of item scores with total correct score:"), "\n",
           "The correlations between the item scores and the total correct scores varied between ",
           rit_min, " (", ifelse(length(rit_min_item) > 1, "items ", "item "),
           list_elements(rit_min_item), ") and ",
@@ -1226,7 +1226,7 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
   aq3_mean <- round(mean(irt_sum$aQ3, na.rm = TRUE), digits)
   aq3_median <- round(median(irt_sum$aQ3, na.rm = TRUE), digits)
   aq3_sd <- round(sd(irt_sum$aQ3, na.rm = TRUE), digits)
-  message("\033[1mLocal dependency:\033[0m\n",
+  message(bold("Local dependency:"), "\n",
           "The estimated aQ3 varied between ",
           aq3_min, " (", ifelse(length(aq3_min_item) > 1, "items ", "item "),
           list_elements(aq3_min_item), ") and ",
@@ -1243,7 +1243,7 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
   disc_mean <- round(mean(irt_sum$Discr., na.rm = TRUE), digits)
   disc_median <- round(median(irt_sum$Discr., na.rm = TRUE), digits)
   disc_sd <- round(sd(irt_sum$Discr., na.rm = TRUE), digits)
-  message("\033[1mItem discrimination:\033[0m\n",
+  message(bold("Item discrimination:"), "\n",
           "The estimated discrimination parameters varied between ",
           disc_min, " (", ifelse(length(disc_min_item) > 1, "items ", "item "),
           list_elements(disc_min_item), ") and ",
@@ -1253,13 +1253,13 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
           disc_median, ".\n")
 
   # Problematic items
-  message("\033[1mPROBLEMATIC ITEMS\033[0m\n")
+  message(bold("PROBLEMATIC ITEMS"), "\n")
 
   ## WMNSQ
   wmnsq_misfit <- irt_sum$Item[irt_sum$WMNSQ >= 1.15]
 
   message(
-    "\033[1mWMNSQ:\033[0m\n",
+    bold("WMNSQ:"), "\n",
     ifelse(
       length(wmnsq_misfit) == 0,
       "No item",
@@ -1274,7 +1274,7 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
   t_misfit <- irt_sum$Item[irt_sum$t >= 8]
 
   message(
-    "\033[1mWMNSQ t-value:\033[0m\n",
+    bold("WMNSQ t-value:"), "\n",
     ifelse(
       length(t_misfit) == 0,
       "No item",
@@ -1289,7 +1289,7 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
   rit_misfit <- irt_sum$Item[irt_sum$rit < 0.2]
 
   message(
-    "\033[1mCorrelation of item scores with total correct score:\033[0m\n",
+    bold("Correlation of item scores with total correct score:"), "\n",
     ifelse(
       length(rit_misfit) == 0,
       "No item",
@@ -1304,7 +1304,7 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
   aq3_misfit <- irt_sum$Item[irt_sum$aQ3 >= 0.2]
 
   message(
-    "\033[1mLocal dependency:\033[0m\n",
+    bold("Local dependency:"), "\n",
     ifelse(
       length(aq3_misfit) == 0,
       "No item",
@@ -1316,17 +1316,17 @@ print_irt_summary <- function(model, irt_sum, steps_sum = NULL, digits = 3) {
   )
 
   # Model results
-  message("\033[1mMODEL RESULTS\033[0m\n")
+  message(bold("MODEL RESULTS"), "\n")
 
   ## Model variance
-  message("\033[1mModel variance:\033[0m\n",
+  message(bold("Model variance:"), "\n",
           "The variance of the model was estimated to be ",
           round(model$mod$variance[1], 3),".\n")
 
   ## Test reliability
   eap_rel <- round(model$mod$EAP.rel[1], 3)
   wle_rel <- round(model$wle_rel[1], 3)
-  message("\033[1mTest reliability:\033[0m\n",
+  message(bold("Test reliability:"), "\n",
           "EAP/PV reliability = ", eap_rel, "\n",
           "WLE reliability = ", wle_rel, "\n")
 

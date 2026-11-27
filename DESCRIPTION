@@ -25,6 +25,7 @@ License: MIT + file LICENSE
 Depends: 
     R (>= 4.3.0)
 Imports:
+    cli,
     dplyr,
     ggplot2,
     graphics,
