@@ -56,6 +56,12 @@ There are three scopes:
       the release window. From v1.3.3 or v1.4.0 on, the spell check runs on
       every PR (roadmap WP 2.1); read its report in the CI log of the same
       commit as above.
+- [ ] The example scripts in `inst/examples/` are re-rendered after the code
+      freeze, so the `.html` files show the output of this release. They use
+      only the package's example data. Rendering needs Pandoc (bundled with
+      RStudio). The scripts are not re-rendered in single PRs, because
+      several PRs of a release change printed output and the large `.html`
+      files would conflict.
 
 **Release notes and version**
 
