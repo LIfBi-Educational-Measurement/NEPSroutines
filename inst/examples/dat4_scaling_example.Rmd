@@ -15,7 +15,33 @@ editor_options:
   chunk_output_type: console
 ---
 
+# Introduction
+
+This example script shows how the scaling of the simulated example data `dat4` with the NEPSroutines package could look like. See the example script `dat4_data_preparation.Rmd` for an illustration of the corresponding data preparation.
+
+Read `help("dat4", package = "NEPSroutines")` for information on the data and included variables.
+
 # Preparation of R and data
+
+## Install NEPSroutines
+
+Install the latest official release using the instructions in the
+[README](https://github.com/LIfBi-Educational-Measurement/NEPSroutines#installation).
+Run the installation commands once in the R console;
+they are not run automatically when knitting this document. 
+
+```r
+# Install pak first if it is not already installed.
+install.packages("pak")
+
+# Install a fixed release, rather than the development version.
+pak::pak("LIfBi-Educational-Measurement/NEPSroutines@vX.Y.Z")
+```
+
+Replace `vX.Y.Z` with the correct tag for the latest release from the
+[Releases page](https://github.com/LIfBi-Educational-Measurement/NEPSroutines/releases).
+Keep the chosen tag in your script to record which release you used.
+Restart R after updating a package that was already loaded.
 
 ## Load package and example data
 
@@ -30,6 +56,8 @@ vars <- dat4$vars
 ```
 
 ## User-defined missing values
+
+Set user-defined missing values (see vignette `prepare_data`) if not yet done so in the data preparation.
 
 ```{r user-defined missing values}
 
@@ -56,7 +84,9 @@ labels_mvs = c(
 
 ```
 
-## Attributes for socio-demographic variables
+## Labels for socio-demographic variables
+
+Set labels for socio-demographic variables (see vignette `prepare_data`) if not yet done so in the data preparation.
 
 ```{r attributes}
 
@@ -77,6 +107,8 @@ attributes(resp$books)$labels <- c(
 
 # Sample and Booklet Descriptives
 
+See vignette `descriptive_analyses`.
+
 ```{r descriptives}
 
 # Sample size with only valid cases
@@ -93,6 +125,8 @@ NEPSroutines::desc_nom(resp, desc = c("sex", "books"), valid = "valid")
 
 
 # Missing Responses Analyses
+
+See vignette `missing_values_analyses`.
 
 ## Missing Responses by Person
 
@@ -164,7 +198,11 @@ NEPSroutines::mv_item(
 
 # IRT Analyses
 
+See vignette `irt_analyses`.
+
 ## Dichotomous items
+
+IRT analyses for all dichotomously scored items (e.g., single-choice items and subtasks of polytomous items). Estimates Rasch and 2PL models.
 
 ```{r IRT analysis with dichotomous items}
 
@@ -189,6 +227,8 @@ NEPSroutines::irt_analysis(
 ```
 
 ## All items
+
+IRT analyses for all scored items included in the final item set (no subtasks). Estimates PCM and GPCM.
 
 ```{r IRT analysis with all items}
 
@@ -216,7 +256,11 @@ NEPSroutines::irt_analysis(
 
 # DIF Analysis
 
+See vignette `dif_analyses`.
+
 ## Dichotomous items
+
+DIF analyses for all dichotomously scored items (e.g., single-choice items and subtasks of polytomous items). Usually not required.
 
 ```{r dif analysis for dichotomous items}
 
@@ -239,6 +283,8 @@ NEPSroutines::dif_analysis(
 ```
 
 ## All items
+
+DIF analyses for all scored items included in the final item set (no subtasks). 
 
 ```{r dif analysis for all items}
 
@@ -268,6 +314,8 @@ NEPSroutines::dif_analysis(
 
 # Distractor Analysis
 
+See vignette `distractor_analyses`.
+
 ```{r distractor analysis}
 
 NEPSroutines::dis_analysis(
@@ -288,6 +336,9 @@ NEPSroutines::dis_analysis(
 
 
 # Dimensionality Analysis
+
+See vignette `dimensionality_analyses`.
+If dimensionality variable is a factor, it needs to be converted to numeric.
 
 ```{r dimensionality analysis}
 
@@ -318,6 +369,8 @@ NEPSroutines::dim_analysis(
 
 
 # Create Scores and SUF
+
+See vignettes `create_scores` and `create_suf`.
 
 ```{r suf}
 
@@ -356,6 +409,8 @@ rm(scores)
 
 
 # Session
+
+Print session information (e.g., loaded packages). Important for reproducible results!
 
 ```{r session-info}
 sessionInfo()

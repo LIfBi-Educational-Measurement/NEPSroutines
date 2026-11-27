@@ -12,7 +12,7 @@
 <meta name="author" content="Jana Welling" />
 
 
-<title>Example Scaling Script for ex3</title>
+<title>Example Scaling Script for dat3</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -2930,33 +2930,62 @@ border-radius: 0px;
 
 
 
-<h1 class="title toc-ignore">Example Scaling Script for ex3</h1>
+<h1 class="title toc-ignore">Example Scaling Script for dat3</h1>
 <h4 class="author">Jana Welling</h4>
-<h4 class="date">2026-08-17 17:10:24.496669</h4>
+<h4 class="date">2026-11-27 09:32:46.785181</h4>
 
 </div>
 
 
-<div id="preparation-of-r-and-data" class="section level1" number="1">
-<h1><span class="header-section-number">1</span> Preparation of R and
+<div id="introduction" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p>This example script shows how the scaling of the simulated example
+data <code>dat3</code> with the NEPSroutines package could look like.
+See the example script <code>dat3_data_preparation.Rmd</code> for an
+illustration of the corresponding data preparation.</p>
+<p>Read <code>help(&quot;dat3&quot;, package = &quot;NEPSroutines&quot;)</code> for
+information on the data and included variables.</p>
+</div>
+<div id="preparation-of-r-and-data" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Preparation of R and
 data</h1>
-<div id="load-data-and-nepsroutines" class="section level2" number="1.1">
-<h2><span class="header-section-number">1.1</span> Load data and
+<div id="install-nepsroutines" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Install
 NEPSroutines</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;ex3.rda&quot;</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>resp <span class="ot">&lt;-</span> ex3<span class="sc">$</span>resp</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>vars <span class="ot">&lt;-</span> ex3<span class="sc">$</span>vars</span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;NEPSroutines&quot;</span>)</span></code></pre></div>
+<p>Install the latest official release using the instructions in the <a href="https://github.com/LIfBi-Educational-Measurement/NEPSroutines#installation">README</a>.
+Run the installation commands once in the R console; they are not run
+automatically when knitting this document.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Install pak first if it is not already installed.</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;pak&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co"># Install a fixed release, rather than the development version.</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pak</span>(<span class="st">&quot;LIfBi-Educational-Measurement/NEPSroutines@vX.Y.Z&quot;</span>)</span></code></pre></div>
+<p>Replace <code>vX.Y.Z</code> with the correct tag for the latest
+release from the <a href="https://github.com/LIfBi-Educational-Measurement/NEPSroutines/releases">Releases
+page</a>. Keep the chosen tag in your script to record which release you
+used. Restart R after updating a package that was already loaded.</p>
 </div>
-<div id="user-defined-missing-values" class="section level2" number="1.2">
-<h2><span class="header-section-number">1.2</span> User-defined missing
+<div id="load-package-and-example-data" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Load package and
+example data</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;NEPSroutines&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;dat3&quot;</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>resp <span class="ot">&lt;-</span> dat3<span class="sc">$</span>resp</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>vars <span class="ot">&lt;-</span> dat3<span class="sc">$</span>vars</span></code></pre></div>
+</div>
+<div id="user-defined-missing-values" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> User-defined missing
 values</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">table</span>(<span class="fu">unlist</span>(resp[resp <span class="sc">&lt;</span> <span class="dv">0</span>]))</span></code></pre></div>
-<pre><code>## Warning in Ops.factor(left, right): &#39;&lt;&#39; ist nicht sinnvoll für Faktoren</code></pre>
+<p>Set user-defined missing values (see vignette
+<code>prepare_data</code>) if not yet done so in the data
+preparation.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">table</span>(<span class="fu">unlist</span>(resp[vars<span class="sc">$</span>item]))</span></code></pre></div>
 <pre><code>## 
-##   -54   -55   -56   -94   -95   -97 
-## 92353   118   850 13615  1225  2841</code></pre>
+##   -54   -55   -56   -94   -95   -97     0     1     2     3     4     5     6 
+## 92353   118   850 13615  1225  2841 13700 23790  4980  5778  3336  1908   576 
+##     a     b     c     d     e     f 
+##  4264  2707  2573  3375  1112   249</code></pre>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>mvs <span class="ot">=</span> <span class="fu">c</span>(</span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="at">OM =</span> <span class="sc">-</span><span class="dv">97</span>,</span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="at">NV =</span> <span class="sc">-</span><span class="dv">95</span>,</span>
@@ -2976,9 +3005,12 @@ values</h2>
 <span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>  <span class="at">MD =</span> <span class="st">&quot;items missing by design&quot;</span></span>
 <span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>)</span></code></pre></div>
 </div>
-<div id="attributes-for-socio-demographic-variables" class="section level2" number="1.3">
-<h2><span class="header-section-number">1.3</span> Attributes for
+<div id="labels-for-socio-demographic-variables" class="section level2" number="2.4">
+<h2><span class="header-section-number">2.4</span> Labels for
 socio-demographic variables</h2>
+<p>Set labels for socio-demographic variables (see vignette
+<code>prepare_data</code>) if not yet done so in the data
+preparation.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Sex</span></span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="fu">attributes</span>(resp<span class="sc">$</span>sex)<span class="sc">$</span>labels <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="at">female =</span> <span class="dv">0</span>,</span>
@@ -2997,9 +3029,14 @@ socio-demographic variables</h2>
 <span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a>  <span class="at">more_than_100 =</span> <span class="dv">1</span></span>
 <span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a>)</span></code></pre></div>
 </div>
-<div id="create-variables-indicating-common-items" class="section level2" number="1.4">
-<h2><span class="header-section-number">1.4</span> Create variables
+<div id="create-variables-indicating-common-items" class="section level2" number="2.5">
+<h2><span class="header-section-number">2.5</span> Create variables
 indicating common items</h2>
+<p>Because the simulated test data consists of three booklets, common
+items between all booklets are defined for further analyses. The
+variable <code>common</code> defines all common items, whereas
+<code>dich</code> and <code>mixed</code> define only the common
+dichotomously scored items or the common mixed/final item set.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>vars<span class="sc">$</span>common <span class="ot">&lt;-</span> vars<span class="sc">$</span>easy <span class="sc">&amp;</span> vars<span class="sc">$</span>medium <span class="sc">&amp;</span> vars<span class="sc">$</span>difficult</span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>resp<span class="sc">$</span>common <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
 <span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a></span>
@@ -3007,9 +3044,10 @@ indicating common items</h2>
 <span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>vars<span class="sc">$</span>mixed_common <span class="ot">&lt;-</span> vars<span class="sc">$</span>mixed <span class="sc">&amp;</span> vars<span class="sc">$</span>common</span></code></pre></div>
 </div>
 </div>
-<div id="sample-and-booklet-descriptives" class="section level1" number="2">
-<h1><span class="header-section-number">2</span> Sample and Booklet
+<div id="sample-and-booklet-descriptives" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Sample and Booklet
 Descriptives</h1>
+<p>See vignette <code>descriptive_analyses</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># Sample size with only valid cases</span></span>
 <span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">n_valid</span>(resp, <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>)</span></code></pre></div>
 <pre><code>## There are 2100 valid cases and 10 invalid cases in the dataset.</code></pre>
@@ -3052,11 +3090,7 @@ Descriptives</h1>
 ## [1,] &quot;51.05%&quot; &quot;79.58%&quot; &quot;50.48%&quot;
 ## [2,] &quot;48.95%&quot; &quot;20.42%&quot; &quot;49.52%&quot;</code></pre>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="co"># Descriptives (attributes, frequency) of nominal booklet variables</span></span>
-<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">show_attributes</span>(resp, <span class="at">desc =</span> <span class="st">&quot;booklet&quot;</span>)</span></code></pre></div>
-<pre><code>## 
-## The attributes for variable booklet are:</code></pre>
-<pre><code>## NULL</code></pre>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">desc_nom</span>(resp, <span class="at">desc =</span> <span class="st">&quot;booklet&quot;</span>, <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>)</span></code></pre></div>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">desc_nom</span>(resp, <span class="at">desc =</span> <span class="st">&quot;booklet&quot;</span>, <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>)</span></code></pre></div>
 <pre><code>## 
 ## Sample size by groups:</code></pre>
 <pre><code>##           booklet
@@ -3077,26 +3111,26 @@ Descriptives</h1>
 ## [1,] &quot;32.57%&quot;
 ## [2,] &quot;34.9%&quot; 
 ## [3,] &quot;32.52%&quot;</code></pre>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a><span class="co"># Sample size by test version</span></span>
-<span id="cb37-2"><a href="#cb37-2" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">sample_by_group</span>(</span>
-<span id="cb37-3"><a href="#cb37-3" tabindex="-1"></a>  <span class="at">resp =</span> resp,</span>
-<span id="cb37-4"><a href="#cb37-4" tabindex="-1"></a>  <span class="at">grouping_variable =</span> <span class="st">&quot;booklet&quot;</span>,</span>
-<span id="cb37-5"><a href="#cb37-5" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb37-6"><a href="#cb37-6" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb37-7"><a href="#cb37-7" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">&quot;tables&quot;</span></span>
-<span id="cb37-8"><a href="#cb37-8" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a><span class="co"># Sample size by test version</span></span>
+<span id="cb34-2"><a href="#cb34-2" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">sample_by_group</span>(</span>
+<span id="cb34-3"><a href="#cb34-3" tabindex="-1"></a>  <span class="at">resp =</span> resp,</span>
+<span id="cb34-4"><a href="#cb34-4" tabindex="-1"></a>  <span class="at">grouping_variable =</span> <span class="st">&quot;booklet&quot;</span>,</span>
+<span id="cb34-5"><a href="#cb34-5" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb34-6"><a href="#cb34-6" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb34-7"><a href="#cb34-7" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">&quot;tables&quot;</span></span>
+<span id="cb34-8"><a href="#cb34-8" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>##      easy    medium difficult     Total 
 ##       686       738       686      2110</code></pre>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a><span class="co"># Item type by test version</span></span>
-<span id="cb39-2"><a href="#cb39-2" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">props_by_group</span>(</span>
-<span id="cb39-3"><a href="#cb39-3" tabindex="-1"></a>  <span class="at">vars =</span> vars,</span>
-<span id="cb39-4"><a href="#cb39-4" tabindex="-1"></a>  <span class="at">select =</span> <span class="st">&quot;mixed&quot;</span>,</span>
-<span id="cb39-5"><a href="#cb39-5" tabindex="-1"></a>  <span class="at">grouping =</span> <span class="fu">c</span>(<span class="st">&quot;easy&quot;</span>,  <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;difficult&quot;</span>),</span>
-<span id="cb39-6"><a href="#cb39-6" tabindex="-1"></a>  <span class="at">properties =</span> <span class="fu">c</span>(<span class="st">&quot;texttype&quot;</span>),</span>
-<span id="cb39-7"><a href="#cb39-7" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb39-8"><a href="#cb39-8" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb39-9"><a href="#cb39-9" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">&quot;tables&quot;</span></span>
-<span id="cb39-10"><a href="#cb39-10" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a><span class="co"># Item type by test version</span></span>
+<span id="cb36-2"><a href="#cb36-2" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">props_by_group</span>(</span>
+<span id="cb36-3"><a href="#cb36-3" tabindex="-1"></a>  <span class="at">vars =</span> vars,</span>
+<span id="cb36-4"><a href="#cb36-4" tabindex="-1"></a>  <span class="at">select =</span> <span class="st">&quot;mixed&quot;</span>,</span>
+<span id="cb36-5"><a href="#cb36-5" tabindex="-1"></a>  <span class="at">grouping =</span> <span class="fu">c</span>(<span class="st">&quot;easy&quot;</span>,  <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;difficult&quot;</span>),</span>
+<span id="cb36-6"><a href="#cb36-6" tabindex="-1"></a>  <span class="at">properties =</span> <span class="fu">c</span>(<span class="st">&quot;texttype&quot;</span>),</span>
+<span id="cb36-7"><a href="#cb36-7" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb36-8"><a href="#cb36-8" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb36-9"><a href="#cb36-9" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">&quot;tables&quot;</span></span>
+<span id="cb36-10"><a href="#cb36-10" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>## $texttype
 ##                       easy medium difficult
 ## instruction              2      3         3
@@ -3106,32 +3140,33 @@ Descriptives</h1>
 ## advertising              2      2         1
 ## Total number of items   10     11        10</code></pre>
 </div>
-<div id="missing-responses-analyses" class="section level1" number="3">
-<h1><span class="header-section-number">3</span> Missing Responses
+<div id="missing-responses-analyses" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Missing Responses
 Analyses</h1>
-<div id="missing-responses-by-person" class="section level2" number="3.1">
-<h2><span class="header-section-number">3.1</span> Missing Responses by
+<p>See vignette <code>missing_values_analyses</code>.</p>
+<div id="missing-responses-by-person" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Missing Responses by
 Person</h2>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">mv_person</span>(</span>
-<span id="cb41-2"><a href="#cb41-2" tabindex="-1"></a>  <span class="at">resp =</span> resp,</span>
-<span id="cb41-3"><a href="#cb41-3" tabindex="-1"></a>  <span class="at">vars =</span> vars,</span>
-<span id="cb41-4"><a href="#cb41-4" tabindex="-1"></a>  <span class="at">select =</span> <span class="st">&quot;mixed&quot;</span>,</span>
-<span id="cb41-5"><a href="#cb41-5" tabindex="-1"></a>  <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>,</span>
-<span id="cb41-6"><a href="#cb41-6" tabindex="-1"></a>  <span class="at">mvs =</span> mvs,</span>
-<span id="cb41-7"><a href="#cb41-7" tabindex="-1"></a>  <span class="at">labels_mvs =</span> labels_mvs,</span>
-<span id="cb41-8"><a href="#cb41-8" tabindex="-1"></a>  <span class="at">missing_by_design =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">56</span>,<span class="sc">-</span><span class="dv">54</span>),</span>
-<span id="cb41-9"><a href="#cb41-9" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb41-10"><a href="#cb41-10" tabindex="-1"></a>  <span class="at">plots =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb41-11"><a href="#cb41-11" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb41-12"><a href="#cb41-12" tabindex="-1"></a>  <span class="at">print =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb41-13"><a href="#cb41-13" tabindex="-1"></a>  <span class="at">return =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb41-14"><a href="#cb41-14" tabindex="-1"></a>  <span class="at">path_results =</span> <span class="st">&quot;results&quot;</span>,</span>
-<span id="cb41-15"><a href="#cb41-15" tabindex="-1"></a>  <span class="at">path_table =</span> <span class="st">&quot;tables&quot;</span>,</span>
-<span id="cb41-16"><a href="#cb41-16" tabindex="-1"></a>  <span class="at">path_plots =</span> <span class="st">&quot;plots/missings_by_person&quot;</span>,</span>
-<span id="cb41-17"><a href="#cb41-17" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">2</span>,</span>
-<span id="cb41-18"><a href="#cb41-18" tabindex="-1"></a>  <span class="at">warn =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb41-19"><a href="#cb41-19" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
-<span id="cb41-20"><a href="#cb41-20" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">mv_person</span>(</span>
+<span id="cb38-2"><a href="#cb38-2" tabindex="-1"></a>  <span class="at">resp =</span> resp,</span>
+<span id="cb38-3"><a href="#cb38-3" tabindex="-1"></a>  <span class="at">vars =</span> vars,</span>
+<span id="cb38-4"><a href="#cb38-4" tabindex="-1"></a>  <span class="at">select =</span> <span class="st">&quot;mixed&quot;</span>,</span>
+<span id="cb38-5"><a href="#cb38-5" tabindex="-1"></a>  <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>,</span>
+<span id="cb38-6"><a href="#cb38-6" tabindex="-1"></a>  <span class="at">mvs =</span> mvs,</span>
+<span id="cb38-7"><a href="#cb38-7" tabindex="-1"></a>  <span class="at">labels_mvs =</span> labels_mvs,</span>
+<span id="cb38-8"><a href="#cb38-8" tabindex="-1"></a>  <span class="at">missing_by_design =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">54</span>,<span class="sc">-</span><span class="dv">56</span>),</span>
+<span id="cb38-9"><a href="#cb38-9" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb38-10"><a href="#cb38-10" tabindex="-1"></a>  <span class="at">plots =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb38-11"><a href="#cb38-11" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb38-12"><a href="#cb38-12" tabindex="-1"></a>  <span class="at">print =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb38-13"><a href="#cb38-13" tabindex="-1"></a>  <span class="at">return =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb38-14"><a href="#cb38-14" tabindex="-1"></a>  <span class="at">path_results =</span> <span class="st">&quot;results&quot;</span>,</span>
+<span id="cb38-15"><a href="#cb38-15" tabindex="-1"></a>  <span class="at">path_table =</span> <span class="st">&quot;tables&quot;</span>,</span>
+<span id="cb38-16"><a href="#cb38-16" tabindex="-1"></a>  <span class="at">path_plots =</span> <span class="st">&quot;plots/missings_by_person&quot;</span>,</span>
+<span id="cb38-17"><a href="#cb38-17" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb38-18"><a href="#cb38-18" tabindex="-1"></a>  <span class="at">warn =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb38-19"><a href="#cb38-19" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
+<span id="cb38-20"><a href="#cb38-20" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>## 
 ## Table with results:</code></pre>
 <pre><code>##          OM   NV   NR   ND  ALL
@@ -3142,36 +3177,36 @@ Person</h2>
 ## max    3.00 2.00 9.00 1.00 9.00</code></pre>
 <pre><code>## </code></pre>
 </div>
-<div id="missing-responses-by-item" class="section level2" number="3.2">
-<h2><span class="header-section-number">3.2</span> Missing Responses by
+<div id="missing-responses-by-item" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Missing Responses by
 Item</h2>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">mv_item</span>(</span>
-<span id="cb45-2"><a href="#cb45-2" tabindex="-1"></a>  <span class="at">resp =</span> resp,</span>
-<span id="cb45-3"><a href="#cb45-3" tabindex="-1"></a>  <span class="at">vars =</span> vars,</span>
-<span id="cb45-4"><a href="#cb45-4" tabindex="-1"></a>  <span class="at">select =</span> <span class="st">&quot;mixed&quot;</span>,</span>
-<span id="cb45-5"><a href="#cb45-5" tabindex="-1"></a>  <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>,</span>
-<span id="cb45-6"><a href="#cb45-6" tabindex="-1"></a>  <span class="at">mvs =</span> mvs,</span>
-<span id="cb45-7"><a href="#cb45-7" tabindex="-1"></a>  <span class="at">labels_mvs =</span> labels_mvs,</span>
-<span id="cb45-8"><a href="#cb45-8" tabindex="-1"></a>  <span class="at">missing_by_design =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">56</span>,<span class="sc">-</span><span class="dv">54</span>),</span>
-<span id="cb45-9"><a href="#cb45-9" tabindex="-1"></a>  <span class="at">grouping =</span> <span class="fu">c</span>(<span class="st">&quot;easy&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;difficult&quot;</span>),</span>
-<span id="cb45-10"><a href="#cb45-10" tabindex="-1"></a>  <span class="at">position =</span> <span class="fu">c</span>(</span>
-<span id="cb45-11"><a href="#cb45-11" tabindex="-1"></a>    <span class="at">easy =</span> <span class="st">&quot;pos_easy&quot;</span>,</span>
-<span id="cb45-12"><a href="#cb45-12" tabindex="-1"></a>    <span class="at">medium =</span> <span class="st">&quot;pos_medium&quot;</span>,</span>
-<span id="cb45-13"><a href="#cb45-13" tabindex="-1"></a>    <span class="at">difficult =</span> <span class="st">&quot;pos_difficult&quot;</span></span>
-<span id="cb45-14"><a href="#cb45-14" tabindex="-1"></a>  ),</span>
-<span id="cb45-15"><a href="#cb45-15" tabindex="-1"></a>  <span class="at">show_all =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb45-16"><a href="#cb45-16" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb45-17"><a href="#cb45-17" tabindex="-1"></a>  <span class="at">plots =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb45-18"><a href="#cb45-18" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb45-19"><a href="#cb45-19" tabindex="-1"></a>  <span class="at">print =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb45-20"><a href="#cb45-20" tabindex="-1"></a>  <span class="at">return =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb45-21"><a href="#cb45-21" tabindex="-1"></a>  <span class="at">path_results =</span> <span class="st">&quot;results&quot;</span>,</span>
-<span id="cb45-22"><a href="#cb45-22" tabindex="-1"></a>  <span class="at">path_table =</span> <span class="st">&quot;tables&quot;</span>,</span>
-<span id="cb45-23"><a href="#cb45-23" tabindex="-1"></a>  <span class="at">path_plots =</span> <span class="st">&quot;plots/missings_by_item&quot;</span>,</span>
-<span id="cb45-24"><a href="#cb45-24" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">2</span>,</span>
-<span id="cb45-25"><a href="#cb45-25" tabindex="-1"></a>  <span class="at">warn =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb45-26"><a href="#cb45-26" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
-<span id="cb45-27"><a href="#cb45-27" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">mv_item</span>(</span>
+<span id="cb42-2"><a href="#cb42-2" tabindex="-1"></a>  <span class="at">resp =</span> resp,</span>
+<span id="cb42-3"><a href="#cb42-3" tabindex="-1"></a>  <span class="at">vars =</span> vars,</span>
+<span id="cb42-4"><a href="#cb42-4" tabindex="-1"></a>  <span class="at">select =</span> <span class="st">&quot;mixed&quot;</span>,</span>
+<span id="cb42-5"><a href="#cb42-5" tabindex="-1"></a>  <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>,</span>
+<span id="cb42-6"><a href="#cb42-6" tabindex="-1"></a>  <span class="at">mvs =</span> mvs,</span>
+<span id="cb42-7"><a href="#cb42-7" tabindex="-1"></a>  <span class="at">labels_mvs =</span> labels_mvs,</span>
+<span id="cb42-8"><a href="#cb42-8" tabindex="-1"></a>  <span class="at">missing_by_design =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">54</span>,<span class="sc">-</span><span class="dv">56</span>),</span>
+<span id="cb42-9"><a href="#cb42-9" tabindex="-1"></a>  <span class="at">grouping =</span> <span class="fu">c</span>(<span class="st">&quot;easy&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;difficult&quot;</span>),</span>
+<span id="cb42-10"><a href="#cb42-10" tabindex="-1"></a>  <span class="at">position =</span> <span class="fu">c</span>(</span>
+<span id="cb42-11"><a href="#cb42-11" tabindex="-1"></a>    <span class="at">easy =</span> <span class="st">&quot;pos_easy&quot;</span>,</span>
+<span id="cb42-12"><a href="#cb42-12" tabindex="-1"></a>    <span class="at">medium =</span> <span class="st">&quot;pos_medium&quot;</span>,</span>
+<span id="cb42-13"><a href="#cb42-13" tabindex="-1"></a>    <span class="at">difficult =</span> <span class="st">&quot;pos_difficult&quot;</span></span>
+<span id="cb42-14"><a href="#cb42-14" tabindex="-1"></a>  ),</span>
+<span id="cb42-15"><a href="#cb42-15" tabindex="-1"></a>  <span class="at">show_all =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb42-16"><a href="#cb42-16" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb42-17"><a href="#cb42-17" tabindex="-1"></a>  <span class="at">plots =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb42-18"><a href="#cb42-18" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb42-19"><a href="#cb42-19" tabindex="-1"></a>  <span class="at">print =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb42-20"><a href="#cb42-20" tabindex="-1"></a>  <span class="at">return =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb42-21"><a href="#cb42-21" tabindex="-1"></a>  <span class="at">path_results =</span> <span class="st">&quot;results&quot;</span>,</span>
+<span id="cb42-22"><a href="#cb42-22" tabindex="-1"></a>  <span class="at">path_table =</span> <span class="st">&quot;tables&quot;</span>,</span>
+<span id="cb42-23"><a href="#cb42-23" tabindex="-1"></a>  <span class="at">path_plots =</span> <span class="st">&quot;plots/missings_by_item&quot;</span>,</span>
+<span id="cb42-24"><a href="#cb42-24" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb42-25"><a href="#cb42-25" tabindex="-1"></a>  <span class="at">warn =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb42-26"><a href="#cb42-26" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
+<span id="cb42-27"><a href="#cb42-27" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>## Warning: Removed 2 rows containing missing values or values outside the scale range
 ## (`geom_col()`).
 ## Removed 2 rows containing missing values or values outside the scale range
@@ -3340,48 +3375,52 @@ Item</h2>
 ## Easy:</code></pre>
 <pre><code>## The proportion of omitted items in the easy test version varied between 1.75% (item reg70010_c) and 4.24% (item reg70060_c).</code></pre>
 <pre><code>## The proportion of not valid items in the easy test version varied between 0.15% (item reg70030_c) and 1.61% (item reg70060_c).</code></pre>
-<pre><code>## The proportion of not reached items in the easy test version varied between 0% (items reg70060_c, reg70070_c) and 42.98% (item reg7005s_c).</code></pre>
+<pre><code>## The proportion of not reached items in the easy test version varied between 0% (items reg70060_c and reg70070_c) and 42.98% (item reg7005s_c).</code></pre>
 <pre><code>## The proportion of not determinable items in the easy test version varied between 0% and 8.04% (item reg7005s_c).</code></pre>
 <pre><code>## The proportion of total missing items in the easy test version varied between 3.36% (item reg70070_c) and 54.24% (item reg7005s_c).</code></pre>
 <pre><code>## 
 ## Medium:</code></pre>
-<pre><code>## The proportion of omitted items in the medium test version varied between 0.95% (item reg7016s_c) and 3.68% (items reg70040_c, reg70110_c).</code></pre>
+<pre><code>## The proportion of omitted items in the medium test version varied between 0.95% (item reg7016s_c) and 3.68% (items reg70040_c and reg70110_c).</code></pre>
 <pre><code>## The proportion of not valid items in the medium test version varied between 0.27% (item reg70150_c) and 1.36% (item reg70020_c).</code></pre>
-<pre><code>## The proportion of not reached items in the medium test version varied between 0% (items reg70010_c, reg70020_c) and 49.25% (item reg7016s_c).</code></pre>
+<pre><code>## The proportion of not reached items in the medium test version varied between 0% (items reg70010_c and reg70020_c) and 49.25% (item reg7016s_c).</code></pre>
 <pre><code>## The proportion of not determinable items in the medium test version varied between 0% and 4.37% (item reg7005s_c).</code></pre>
 <pre><code>## The proportion of total missing items in the medium test version varied between 3.41% (item reg70030_c) and 51.16% (item reg7016s_c).</code></pre>
 <pre><code>## 
 ## Difficult:</code></pre>
 <pre><code>## The proportion of omitted items in the difficult test version varied between 1.9% (item reg70040_c) and 3.66% (item reg7021s_c).</code></pre>
 <pre><code>## The proportion of not valid items in the difficult test version varied between 0.59% and 1.46% (item reg70020_c).</code></pre>
-<pre><code>## The proportion of not reached items in the difficult test version varied between 0% (items reg70170_c, reg70180_c, reg7019s_c) and 43.48% (item reg7005s_c).</code></pre>
+<pre><code>## The proportion of not reached items in the difficult test version varied between 0% (items reg70170_c, reg70180_c, and reg7019s_c) and 43.48% (item reg7005s_c).</code></pre>
 <pre><code>## The proportion of not determinable items in the difficult test version varied between 0% and 4.54% (item reg7005s_c).</code></pre>
 <pre><code>## The proportion of total missing items in the difficult test version varied between 2.64% (item reg70180_c) and 51.83% (item reg7005s_c).</code></pre>
 <pre><code>## </code></pre>
 </div>
 </div>
-<div id="irt-analyses" class="section level1" number="4">
-<h1><span class="header-section-number">4</span> IRT Analyses</h1>
-<div id="dichotomous-items" class="section level2" number="4.1">
-<h2><span class="header-section-number">4.1</span> Dichotomous
+<div id="irt-analyses" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> IRT Analyses</h1>
+<p>See vignette <code>irt_analyses</code>.</p>
+<div id="dichotomous-items" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Dichotomous
 items</h2>
-<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">irt_analysis</span>(</span>
-<span id="cb69-2"><a href="#cb69-2" tabindex="-1"></a>  <span class="at">resp =</span> resp,</span>
-<span id="cb69-3"><a href="#cb69-3" tabindex="-1"></a>  <span class="at">vars =</span> vars,</span>
-<span id="cb69-4"><a href="#cb69-4" tabindex="-1"></a>  <span class="at">select =</span> <span class="st">&quot;dich&quot;</span>,</span>
-<span id="cb69-5"><a href="#cb69-5" tabindex="-1"></a>  <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>,</span>
-<span id="cb69-6"><a href="#cb69-6" tabindex="-1"></a>  <span class="at">mvs =</span> mvs,</span>
-<span id="cb69-7"><a href="#cb69-7" tabindex="-1"></a>  <span class="at">plots =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb69-8"><a href="#cb69-8" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb69-9"><a href="#cb69-9" tabindex="-1"></a>  <span class="at">print =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb69-10"><a href="#cb69-10" tabindex="-1"></a>  <span class="at">return =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb69-11"><a href="#cb69-11" tabindex="-1"></a>  <span class="at">path_results =</span> <span class="st">&quot;results&quot;</span>,</span>
-<span id="cb69-12"><a href="#cb69-12" tabindex="-1"></a>  <span class="at">path_table =</span> <span class="st">&quot;tables&quot;</span>,</span>
-<span id="cb69-13"><a href="#cb69-13" tabindex="-1"></a>  <span class="at">path_plots =</span> <span class="st">&quot;plots&quot;</span>,</span>
-<span id="cb69-14"><a href="#cb69-14" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb69-15"><a href="#cb69-15" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">2</span>,</span>
-<span id="cb69-16"><a href="#cb69-16" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
-<span id="cb69-17"><a href="#cb69-17" tabindex="-1"></a>)</span></code></pre></div>
+<p>IRT analyses for all dichotomously scored items (e.g., single-choice
+items and subtasks of polytomous items). Estimates Rasch and 2PL
+models.</p>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">irt_analysis</span>(</span>
+<span id="cb66-2"><a href="#cb66-2" tabindex="-1"></a>  <span class="at">resp =</span> resp,</span>
+<span id="cb66-3"><a href="#cb66-3" tabindex="-1"></a>  <span class="at">vars =</span> vars,</span>
+<span id="cb66-4"><a href="#cb66-4" tabindex="-1"></a>  <span class="at">select =</span> <span class="st">&quot;dich&quot;</span>,</span>
+<span id="cb66-5"><a href="#cb66-5" tabindex="-1"></a>  <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>,</span>
+<span id="cb66-6"><a href="#cb66-6" tabindex="-1"></a>  <span class="at">mvs =</span> mvs,</span>
+<span id="cb66-7"><a href="#cb66-7" tabindex="-1"></a>  <span class="at">plots =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb66-8"><a href="#cb66-8" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb66-9"><a href="#cb66-9" tabindex="-1"></a>  <span class="at">print =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb66-10"><a href="#cb66-10" tabindex="-1"></a>  <span class="at">return =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb66-11"><a href="#cb66-11" tabindex="-1"></a>  <span class="at">path_results =</span> <span class="st">&quot;results&quot;</span>,</span>
+<span id="cb66-12"><a href="#cb66-12" tabindex="-1"></a>  <span class="at">path_table =</span> <span class="st">&quot;tables&quot;</span>,</span>
+<span id="cb66-13"><a href="#cb66-13" tabindex="-1"></a>  <span class="at">path_plots =</span> <span class="st">&quot;plots&quot;</span>,</span>
+<span id="cb66-14"><a href="#cb66-14" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb66-15"><a href="#cb66-15" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb66-16"><a href="#cb66-16" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
+<span id="cb66-17"><a href="#cb66-17" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>## 
 ## IRT summary table</code></pre>
 <pre><code>##          Item N_administered N_valid correct   xsi   SE WMNSQ     t  rit  aQ3
@@ -3499,28 +3538,28 @@ items</h2>
 <pre><code>## Thresholds:
 ## The estimated thresholds varied between -3.1 (item reg70213_c) and 2.35 (item reg70166_c) with an average of -0.43 (SD = 1.7), and a median of -0.08.</code></pre>
 </div>
-<div id="all-items" class="section level2" number="4.2">
-<h2><span class="header-section-number">4.2</span> All items</h2>
-<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">irt_analysis</span>(</span>
-<span id="cb87-2"><a href="#cb87-2" tabindex="-1"></a>  <span class="at">resp =</span> resp,</span>
-<span id="cb87-3"><a href="#cb87-3" tabindex="-1"></a>  <span class="at">vars =</span> vars,</span>
-<span id="cb87-4"><a href="#cb87-4" tabindex="-1"></a>  <span class="at">select =</span> <span class="st">&quot;mixed&quot;</span>,</span>
-<span id="cb87-5"><a href="#cb87-5" tabindex="-1"></a>  <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>,</span>
-<span id="cb87-6"><a href="#cb87-6" tabindex="-1"></a>  <span class="at">scoring =</span> <span class="st">&quot;scoring&quot;</span>,</span>
-<span id="cb87-7"><a href="#cb87-7" tabindex="-1"></a>  <span class="at">mvs =</span> mvs,</span>
-<span id="cb87-8"><a href="#cb87-8" tabindex="-1"></a>  <span class="at">plots =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb87-9"><a href="#cb87-9" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb87-10"><a href="#cb87-10" tabindex="-1"></a>  <span class="at">print =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb87-11"><a href="#cb87-11" tabindex="-1"></a>  <span class="at">return =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb87-12"><a href="#cb87-12" tabindex="-1"></a>  <span class="at">path_results =</span> <span class="st">&quot;results&quot;</span>,</span>
-<span id="cb87-13"><a href="#cb87-13" tabindex="-1"></a>  <span class="at">path_table =</span> <span class="st">&quot;tables&quot;</span>,</span>
-<span id="cb87-14"><a href="#cb87-14" tabindex="-1"></a>  <span class="at">path_plots =</span> <span class="st">&quot;plots&quot;</span>,</span>
-<span id="cb87-15"><a href="#cb87-15" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb87-16"><a href="#cb87-16" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">2</span>,</span>
-<span id="cb87-17"><a href="#cb87-17" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
-<span id="cb87-18"><a href="#cb87-18" tabindex="-1"></a>)</span></code></pre></div>
-<pre><code>## Warning in steps_analysis(pcm_model = irt$model.pcm, suf_item_names =
-## suf_item_names, : NAs durch Umwandlung erzeugt</code></pre>
+<div id="all-items" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> All items</h2>
+<p>IRT analyses for all scored items included in the final item set (no
+subtasks). Estimates PCM and GPCM.</p>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">irt_analysis</span>(</span>
+<span id="cb84-2"><a href="#cb84-2" tabindex="-1"></a>  <span class="at">resp =</span> resp,</span>
+<span id="cb84-3"><a href="#cb84-3" tabindex="-1"></a>  <span class="at">vars =</span> vars,</span>
+<span id="cb84-4"><a href="#cb84-4" tabindex="-1"></a>  <span class="at">select =</span> <span class="st">&quot;mixed&quot;</span>,</span>
+<span id="cb84-5"><a href="#cb84-5" tabindex="-1"></a>  <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>,</span>
+<span id="cb84-6"><a href="#cb84-6" tabindex="-1"></a>  <span class="at">scoring =</span> <span class="st">&quot;scoring&quot;</span>,</span>
+<span id="cb84-7"><a href="#cb84-7" tabindex="-1"></a>  <span class="at">mvs =</span> mvs,</span>
+<span id="cb84-8"><a href="#cb84-8" tabindex="-1"></a>  <span class="at">plots =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb84-9"><a href="#cb84-9" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb84-10"><a href="#cb84-10" tabindex="-1"></a>  <span class="at">print =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb84-11"><a href="#cb84-11" tabindex="-1"></a>  <span class="at">return =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb84-12"><a href="#cb84-12" tabindex="-1"></a>  <span class="at">path_results =</span> <span class="st">&quot;results&quot;</span>,</span>
+<span id="cb84-13"><a href="#cb84-13" tabindex="-1"></a>  <span class="at">path_table =</span> <span class="st">&quot;tables&quot;</span>,</span>
+<span id="cb84-14"><a href="#cb84-14" tabindex="-1"></a>  <span class="at">path_plots =</span> <span class="st">&quot;plots&quot;</span>,</span>
+<span id="cb84-15"><a href="#cb84-15" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb84-16"><a href="#cb84-16" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb84-17"><a href="#cb84-17" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
+<span id="cb84-18"><a href="#cb84-18" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>## 
 ## IRT summary table</code></pre>
 <pre><code>##          Item N_administered N_valid correct   xsi   SE WMNSQ     t  rit  aQ3
@@ -3574,18 +3613,12 @@ items</h2>
 ## GPCM model 2100    61    25718 25840 26185  0.687  0.630</code></pre>
 <pre><code>## 
 ## Steps analysis table</code></pre>
-<pre><code>##                    step1         step2         step3        step4        step5
-## reg7005s_c  -2.28 (0.12) -0.32 (0.062)  0.19 (0.062)  1.08 (0.12)         1.33
-## reg7009s_c -1.98 (0.132)  -0.46 (0.12) -0.15 (0.082)  0.76 (0.12)         1.83
-## reg7016s_c -1.81 (0.212) -1.10 (0.142)  0.01 (0.122) 0.25 (0.132) 0.71 (0.182)
-## reg7019s_c -2.45 (0.132)  0.20 (0.082)  0.68 (0.112)         1.57         &lt;NA&gt;
-## reg7021s_c -1.36 (0.092) -0.65 (0.082)  0.65 (0.082)         1.36         &lt;NA&gt;
-##            step6
-## reg7005s_c  &lt;NA&gt;
-## reg7009s_c  &lt;NA&gt;
-## reg7016s_c  1.94
-## reg7019s_c  &lt;NA&gt;
-## reg7021s_c  &lt;NA&gt;</code></pre>
+<pre><code>##                   step1        step2        step3       step4       step5 step6
+## reg7005s_c -2.28 (0.10) -0.32 (0.06)  0.19 (0.06) 1.08 (0.10)        1.33  &lt;NA&gt;
+## reg7009s_c -1.98 (0.13) -0.46 (0.10) -0.15 (0.08) 0.76 (0.10)        1.83  &lt;NA&gt;
+## reg7016s_c -1.81 (0.21) -1.10 (0.14)  0.01 (0.12) 0.25 (0.13) 0.71 (0.18)  1.94
+## reg7019s_c -2.45 (0.13)  0.20 (0.08)  0.68 (0.11)        1.57        &lt;NA&gt;  &lt;NA&gt;
+## reg7021s_c -1.36 (0.09) -0.65 (0.08)  0.65 (0.08)        1.36        &lt;NA&gt;  &lt;NA&gt;</code></pre>
 <pre><code>## 
 ## SUMMARY FOR TR</code></pre>
 <pre><code>## Percentage correct:
@@ -3603,7 +3636,7 @@ items</h2>
 <pre><code>## No item exhibited a t-value of at least 8.</code></pre>
 <pre><code>## 
 ## Correlation of item scores with total correct score:
-## The correlations between the item scores and the total correct scores varied between 0.14 (items reg70130_c, reg70150_c, reg70180_c) and 0.56 (item reg7016s_c) with an average correlation of 0.29 (SD = 0.1), and a median correlation of 0.28.</code></pre>
+## The correlations between the item scores and the total correct scores varied between 0.14 (items reg70130_c, reg70150_c, and reg70180_c) and 0.56 (item reg7016s_c) with an average correlation of 0.29 (SD = 0.1), and a median correlation of 0.28.</code></pre>
 <pre><code>## Model variance:
 ## The variance of the model was estimated to be 1.386.</code></pre>
 <pre><code>## Test reliability:
@@ -3615,27 +3648,30 @@ items</h2>
 ## The estimated thresholds varied between -5.8 (item reg7021s_c) and 4.7 (item NA) with an average of -0.55 (SD = 2.56), and a median of -0.34.</code></pre>
 </div>
 </div>
-<div id="dif-analysis" class="section level1" number="5">
-<h1><span class="header-section-number">5</span> DIF Analysis</h1>
-<div id="dichotomous-items-1" class="section level2" number="5.1">
-<h2><span class="header-section-number">5.1</span> Dichotomous
+<div id="dif-analysis" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> DIF Analysis</h1>
+<p>See vignette <code>dif_analyses</code>.</p>
+<div id="dichotomous-items-1" class="section level2" number="6.1">
+<h2><span class="header-section-number">6.1</span> Dichotomous
 items</h2>
-<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">dif_analysis</span>(</span>
-<span id="cb108-2"><a href="#cb108-2" tabindex="-1"></a>  <span class="at">resp =</span> resp,</span>
-<span id="cb108-3"><a href="#cb108-3" tabindex="-1"></a>  <span class="at">vars =</span> vars,</span>
-<span id="cb108-4"><a href="#cb108-4" tabindex="-1"></a>  <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>,</span>
-<span id="cb108-5"><a href="#cb108-5" tabindex="-1"></a>  <span class="at">dif_vars =</span> <span class="fu">c</span>(<span class="st">&quot;booklet&quot;</span>, <span class="st">&quot;sex&quot;</span>, <span class="st">&quot;mig&quot;</span>, <span class="st">&quot;books&quot;</span>),</span>
-<span id="cb108-6"><a href="#cb108-6" tabindex="-1"></a>  <span class="at">select =</span> <span class="fu">c</span>(<span class="st">&quot;dich_common&quot;</span>, <span class="st">&quot;dich&quot;</span>, <span class="st">&quot;dich&quot;</span>, <span class="st">&quot;dich&quot;</span>),</span>
-<span id="cb108-7"><a href="#cb108-7" tabindex="-1"></a>  <span class="at">scoring =</span> <span class="st">&quot;scoring&quot;</span>,</span>
-<span id="cb108-8"><a href="#cb108-8" tabindex="-1"></a>  <span class="at">mvs =</span> mvs,</span>
-<span id="cb108-9"><a href="#cb108-9" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb108-10"><a href="#cb108-10" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb108-11"><a href="#cb108-11" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb108-12"><a href="#cb108-12" tabindex="-1"></a>  <span class="at">print =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb108-13"><a href="#cb108-13" tabindex="-1"></a>  <span class="at">return =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb108-14"><a href="#cb108-14" tabindex="-1"></a>  <span class="at">path_results =</span> <span class="st">&quot;results&quot;</span>,</span>
-<span id="cb108-15"><a href="#cb108-15" tabindex="-1"></a>  <span class="at">path_table =</span> <span class="st">&quot;tables&quot;</span></span>
-<span id="cb108-16"><a href="#cb108-16" tabindex="-1"></a>)</span></code></pre></div>
+<p>DIF analyses for all dichotomously scored items (e.g., single-choice
+items and subtasks of polytomous items). Usually not required.</p>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">dif_analysis</span>(</span>
+<span id="cb104-2"><a href="#cb104-2" tabindex="-1"></a>  <span class="at">resp =</span> resp,</span>
+<span id="cb104-3"><a href="#cb104-3" tabindex="-1"></a>  <span class="at">vars =</span> vars,</span>
+<span id="cb104-4"><a href="#cb104-4" tabindex="-1"></a>  <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>,</span>
+<span id="cb104-5"><a href="#cb104-5" tabindex="-1"></a>  <span class="at">dif_vars =</span> <span class="fu">c</span>(<span class="st">&quot;booklet&quot;</span>, <span class="st">&quot;sex&quot;</span>, <span class="st">&quot;mig&quot;</span>, <span class="st">&quot;books&quot;</span>),</span>
+<span id="cb104-6"><a href="#cb104-6" tabindex="-1"></a>  <span class="at">select =</span> <span class="fu">c</span>(<span class="st">&quot;dich_common&quot;</span>, <span class="st">&quot;dich&quot;</span>, <span class="st">&quot;dich&quot;</span>, <span class="st">&quot;dich&quot;</span>),</span>
+<span id="cb104-7"><a href="#cb104-7" tabindex="-1"></a>  <span class="at">scoring =</span> <span class="st">&quot;scoring&quot;</span>,</span>
+<span id="cb104-8"><a href="#cb104-8" tabindex="-1"></a>  <span class="at">mvs =</span> mvs,</span>
+<span id="cb104-9"><a href="#cb104-9" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb104-10"><a href="#cb104-10" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb104-11"><a href="#cb104-11" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb104-12"><a href="#cb104-12" tabindex="-1"></a>  <span class="at">print =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb104-13"><a href="#cb104-13" tabindex="-1"></a>  <span class="at">return =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb104-14"><a href="#cb104-14" tabindex="-1"></a>  <span class="at">path_results =</span> <span class="st">&quot;results&quot;</span>,</span>
+<span id="cb104-15"><a href="#cb104-15" tabindex="-1"></a>  <span class="at">path_table =</span> <span class="st">&quot;tables&quot;</span></span>
+<span id="cb104-16"><a href="#cb104-16" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>## Warning in warn_included_missings(dif_var, mis): 391 missing values were found in the DIF variable mig. The corresponding cases were included in the analysis as an extra group.</code></pre>
 <pre><code>## 
 ## RESULTS FOR THE DIF VARIABLE &#39;booklet&#39;:</code></pre>
@@ -3778,24 +3814,26 @@ items</h2>
 ## 26 reg70095_c  0.539  0.139  0.494 15.037 117.283   1 2098 1
 ## 32 reg70166_c -0.521  0.170 -0.478  9.392 117.283   1 2098 1</code></pre>
 </div>
-<div id="all-items-1" class="section level2" number="5.2">
-<h2><span class="header-section-number">5.2</span> All items</h2>
-<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb166-1"><a href="#cb166-1" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">dif_analysis</span>(</span>
-<span id="cb166-2"><a href="#cb166-2" tabindex="-1"></a>  <span class="at">resp =</span> resp,</span>
-<span id="cb166-3"><a href="#cb166-3" tabindex="-1"></a>  <span class="at">vars =</span> vars,</span>
-<span id="cb166-4"><a href="#cb166-4" tabindex="-1"></a>  <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>,</span>
-<span id="cb166-5"><a href="#cb166-5" tabindex="-1"></a>  <span class="at">dif_vars =</span> <span class="fu">c</span>(<span class="st">&quot;booklet&quot;</span>, <span class="st">&quot;sex&quot;</span>, <span class="st">&quot;mig&quot;</span>, <span class="st">&quot;books&quot;</span>),</span>
-<span id="cb166-6"><a href="#cb166-6" tabindex="-1"></a>  <span class="at">select =</span> <span class="fu">c</span>(<span class="st">&quot;mixed_common&quot;</span>, <span class="st">&quot;mixed&quot;</span>, <span class="st">&quot;mixed&quot;</span>, <span class="st">&quot;mixed&quot;</span>),</span>
-<span id="cb166-7"><a href="#cb166-7" tabindex="-1"></a>  <span class="at">scoring =</span> <span class="st">&quot;scoring&quot;</span>,</span>
-<span id="cb166-8"><a href="#cb166-8" tabindex="-1"></a>  <span class="at">mvs =</span> mvs,</span>
-<span id="cb166-9"><a href="#cb166-9" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb166-10"><a href="#cb166-10" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb166-11"><a href="#cb166-11" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb166-12"><a href="#cb166-12" tabindex="-1"></a>  <span class="at">print =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb166-13"><a href="#cb166-13" tabindex="-1"></a>  <span class="at">return =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb166-14"><a href="#cb166-14" tabindex="-1"></a>  <span class="at">path_results =</span> <span class="st">&quot;results&quot;</span>,</span>
-<span id="cb166-15"><a href="#cb166-15" tabindex="-1"></a>  <span class="at">path_table =</span> <span class="st">&quot;tables&quot;</span></span>
-<span id="cb166-16"><a href="#cb166-16" tabindex="-1"></a>)</span></code></pre></div>
+<div id="all-items-1" class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> All items</h2>
+<p>DIF analyses for all scored items included in the final item set (no
+subtasks).</p>
+<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="#cb162-1" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">dif_analysis</span>(</span>
+<span id="cb162-2"><a href="#cb162-2" tabindex="-1"></a>  <span class="at">resp =</span> resp,</span>
+<span id="cb162-3"><a href="#cb162-3" tabindex="-1"></a>  <span class="at">vars =</span> vars,</span>
+<span id="cb162-4"><a href="#cb162-4" tabindex="-1"></a>  <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>,</span>
+<span id="cb162-5"><a href="#cb162-5" tabindex="-1"></a>  <span class="at">dif_vars =</span> <span class="fu">c</span>(<span class="st">&quot;booklet&quot;</span>, <span class="st">&quot;sex&quot;</span>, <span class="st">&quot;mig&quot;</span>, <span class="st">&quot;books&quot;</span>),</span>
+<span id="cb162-6"><a href="#cb162-6" tabindex="-1"></a>  <span class="at">select =</span> <span class="fu">c</span>(<span class="st">&quot;mixed_common&quot;</span>, <span class="st">&quot;mixed&quot;</span>, <span class="st">&quot;mixed&quot;</span>, <span class="st">&quot;mixed&quot;</span>),</span>
+<span id="cb162-7"><a href="#cb162-7" tabindex="-1"></a>  <span class="at">scoring =</span> <span class="st">&quot;scoring&quot;</span>,</span>
+<span id="cb162-8"><a href="#cb162-8" tabindex="-1"></a>  <span class="at">mvs =</span> mvs,</span>
+<span id="cb162-9"><a href="#cb162-9" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb162-10"><a href="#cb162-10" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb162-11"><a href="#cb162-11" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb162-12"><a href="#cb162-12" tabindex="-1"></a>  <span class="at">print =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb162-13"><a href="#cb162-13" tabindex="-1"></a>  <span class="at">return =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb162-14"><a href="#cb162-14" tabindex="-1"></a>  <span class="at">path_results =</span> <span class="st">&quot;results&quot;</span>,</span>
+<span id="cb162-15"><a href="#cb162-15" tabindex="-1"></a>  <span class="at">path_table =</span> <span class="st">&quot;tables&quot;</span></span>
+<span id="cb162-16"><a href="#cb162-16" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>## Warning in warn_included_missings(dif_var, mis): 391 missing values were found in the DIF variable mig. The corresponding cases were included in the analysis as an extra group.</code></pre>
 <pre><code>## 
 ## RESULTS FOR THE DIF VARIABLE &#39;booklet&#39;:</code></pre>
@@ -3925,22 +3963,23 @@ items</h2>
 <pre><code>## No items found.</code></pre>
 </div>
 </div>
-<div id="distractor-analysis" class="section level1" number="6">
-<h1><span class="header-section-number">6</span> Distractor
+<div id="distractor-analysis" class="section level1" number="7">
+<h1><span class="header-section-number">7</span> Distractor
 Analysis</h1>
-<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb225-1"><a href="#cb225-1" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">dis_analysis</span>(</span>
-<span id="cb225-2"><a href="#cb225-2" tabindex="-1"></a>  <span class="at">resp =</span> resp,</span>
-<span id="cb225-3"><a href="#cb225-3" tabindex="-1"></a>  <span class="at">vars =</span> vars,</span>
-<span id="cb225-4"><a href="#cb225-4" tabindex="-1"></a>  <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>,</span>
-<span id="cb225-5"><a href="#cb225-5" tabindex="-1"></a>  <span class="at">select_raw =</span> <span class="st">&quot;raw&quot;</span>,</span>
-<span id="cb225-6"><a href="#cb225-6" tabindex="-1"></a>  <span class="at">correct =</span> <span class="st">&quot;correct&quot;</span>,</span>
-<span id="cb225-7"><a href="#cb225-7" tabindex="-1"></a>  <span class="at">mvs =</span> mvs,</span>
-<span id="cb225-8"><a href="#cb225-8" tabindex="-1"></a>  <span class="at">print =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb225-9"><a href="#cb225-9" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb225-10"><a href="#cb225-10" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb225-11"><a href="#cb225-11" tabindex="-1"></a>  <span class="at">path_results =</span> <span class="st">&quot;results&quot;</span>,</span>
-<span id="cb225-12"><a href="#cb225-12" tabindex="-1"></a>  <span class="at">path_table =</span> <span class="st">&quot;tables&quot;</span></span>
-<span id="cb225-13"><a href="#cb225-13" tabindex="-1"></a>)</span></code></pre></div>
+<p>See vignette <code>distractor_analyses</code>.</p>
+<div class="sourceCode" id="cb221"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb221-1"><a href="#cb221-1" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">dis_analysis</span>(</span>
+<span id="cb221-2"><a href="#cb221-2" tabindex="-1"></a>  <span class="at">resp =</span> resp,</span>
+<span id="cb221-3"><a href="#cb221-3" tabindex="-1"></a>  <span class="at">vars =</span> vars,</span>
+<span id="cb221-4"><a href="#cb221-4" tabindex="-1"></a>  <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>,</span>
+<span id="cb221-5"><a href="#cb221-5" tabindex="-1"></a>  <span class="at">select_raw =</span> <span class="st">&quot;raw&quot;</span>,</span>
+<span id="cb221-6"><a href="#cb221-6" tabindex="-1"></a>  <span class="at">correct =</span> <span class="st">&quot;correct&quot;</span>,</span>
+<span id="cb221-7"><a href="#cb221-7" tabindex="-1"></a>  <span class="at">mvs =</span> mvs,</span>
+<span id="cb221-8"><a href="#cb221-8" tabindex="-1"></a>  <span class="at">print =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb221-9"><a href="#cb221-9" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb221-10"><a href="#cb221-10" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb221-11"><a href="#cb221-11" tabindex="-1"></a>  <span class="at">path_results =</span> <span class="st">&quot;results&quot;</span>,</span>
+<span id="cb221-12"><a href="#cb221-12" tabindex="-1"></a>  <span class="at">path_table =</span> <span class="st">&quot;tables&quot;</span></span>
+<span id="cb221-13"><a href="#cb221-13" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>## Warning in cbind(correct = rc[, 3], distract = rd[, 3]): number of rows of
 ## result is not a multiple of vector length (arg 1)</code></pre>
 <pre><code>## 
@@ -3957,11 +3996,14 @@ Analysis</h1>
 ## Items with problematic item-total correlations for correct response (r &lt; 0.2): 
 ## reg701301, reg701502, reg702141</code></pre>
 </div>
-<div id="dimensionality-analysis" class="section level1" number="7">
-<h1><span class="header-section-number">7</span> Dimensionality
+<div id="dimensionality-analysis" class="section level1" number="8">
+<h1><span class="header-section-number">8</span> Dimensionality
 Analysis</h1>
-<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb230-1"><a href="#cb230-1" tabindex="-1"></a>vars<span class="sc">$</span>texttype_num <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(vars<span class="sc">$</span>texttype))</span>
-<span id="cb230-2"><a href="#cb230-2" tabindex="-1"></a><span class="fu">table</span>(vars<span class="sc">$</span>texttype, vars<span class="sc">$</span>texttype_num)</span></code></pre></div>
+<p>See vignette <code>dimensionality_analyses</code>. If dimensionality
+variable is a factor, it needs to be converted to numeric.</p>
+<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="#cb226-1" tabindex="-1"></a><span class="co"># Create numerical dimensionality variable</span></span>
+<span id="cb226-2"><a href="#cb226-2" tabindex="-1"></a>vars<span class="sc">$</span>texttype_num <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(vars<span class="sc">$</span>texttype))</span>
+<span id="cb226-3"><a href="#cb226-3" tabindex="-1"></a><span class="fu">table</span>(vars<span class="sc">$</span>texttype, vars<span class="sc">$</span>texttype_num)</span></code></pre></div>
 <pre><code>##              
 ##                1  2  3  4  5
 ##   advertising 26  0  0  0  0
@@ -3969,88 +4011,88 @@ Analysis</h1>
 ##   information  0  0  6  0  0
 ##   instruction  0  0  0  8  0
 ##   literary     0  0  0  0  8</code></pre>
-<div class="sourceCode" id="cb232"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb232-1"><a href="#cb232-1" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">dim_analysis</span>(</span>
-<span id="cb232-2"><a href="#cb232-2" tabindex="-1"></a>  <span class="at">resp =</span> resp,</span>
-<span id="cb232-3"><a href="#cb232-3" tabindex="-1"></a>  <span class="at">vars =</span> vars,</span>
-<span id="cb232-4"><a href="#cb232-4" tabindex="-1"></a>  <span class="at">select =</span> <span class="st">&quot;mixed&quot;</span>,</span>
-<span id="cb232-5"><a href="#cb232-5" tabindex="-1"></a>  <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>,</span>
-<span id="cb232-6"><a href="#cb232-6" tabindex="-1"></a>  <span class="at">scoring =</span> <span class="st">&quot;scoring&quot;</span>,</span>
-<span id="cb232-7"><a href="#cb232-7" tabindex="-1"></a>  <span class="at">irtmodel =</span> <span class="st">&quot;PCM2&quot;</span>,</span>
-<span id="cb232-8"><a href="#cb232-8" tabindex="-1"></a>  <span class="at">dim =</span> <span class="st">&quot;texttype_num&quot;</span>,</span>
-<span id="cb232-9"><a href="#cb232-9" tabindex="-1"></a>  <span class="at">mvs =</span> mvs,</span>
-<span id="cb232-10"><a href="#cb232-10" tabindex="-1"></a>  <span class="at">maxiter =</span> <span class="dv">10</span>,</span>
-<span id="cb232-11"><a href="#cb232-11" tabindex="-1"></a>  <span class="at">snodes =</span> <span class="dv">5</span>,</span>
-<span id="cb232-12"><a href="#cb232-12" tabindex="-1"></a>  <span class="at">return =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb232-13"><a href="#cb232-13" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb232-14"><a href="#cb232-14" tabindex="-1"></a>  <span class="at">print =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb232-15"><a href="#cb232-15" tabindex="-1"></a>  <span class="at">path_table =</span> <span class="st">&quot;tables&quot;</span>, </span>
-<span id="cb232-16"><a href="#cb232-16" tabindex="-1"></a>  <span class="at">path_results =</span> <span class="st">&quot;results&quot;</span>,</span>
-<span id="cb232-17"><a href="#cb232-17" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb232-18"><a href="#cb232-18" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
-<span id="cb232-19"><a href="#cb232-19" tabindex="-1"></a>)</span></code></pre></div>
-<pre><code>## Warning in reached_maxiter(dimensionality$uni, &quot;&#39;unidimensional&#39;&quot;): Maximum number of iterations were reached for the IRT model &#39;unidimensional&#39;! Model did not converge.</code></pre>
+<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="#cb228-1" tabindex="-1"></a><span class="co"># Conduct dimensionality analysis</span></span>
+<span id="cb228-2"><a href="#cb228-2" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">dim_analysis</span>(</span>
+<span id="cb228-3"><a href="#cb228-3" tabindex="-1"></a>  <span class="at">resp =</span> resp,</span>
+<span id="cb228-4"><a href="#cb228-4" tabindex="-1"></a>  <span class="at">vars =</span> vars,</span>
+<span id="cb228-5"><a href="#cb228-5" tabindex="-1"></a>  <span class="at">select =</span> <span class="st">&quot;mixed&quot;</span>,</span>
+<span id="cb228-6"><a href="#cb228-6" tabindex="-1"></a>  <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>,</span>
+<span id="cb228-7"><a href="#cb228-7" tabindex="-1"></a>  <span class="at">scoring =</span> <span class="st">&quot;scoring&quot;</span>,</span>
+<span id="cb228-8"><a href="#cb228-8" tabindex="-1"></a>  <span class="at">irtmodel =</span> <span class="st">&quot;PCM2&quot;</span>,</span>
+<span id="cb228-9"><a href="#cb228-9" tabindex="-1"></a>  <span class="at">dim =</span> <span class="st">&quot;texttype_num&quot;</span>,</span>
+<span id="cb228-10"><a href="#cb228-10" tabindex="-1"></a>  <span class="at">mvs =</span> mvs,</span>
+<span id="cb228-11"><a href="#cb228-11" tabindex="-1"></a>  <span class="at">return =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb228-12"><a href="#cb228-12" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb228-13"><a href="#cb228-13" tabindex="-1"></a>  <span class="at">print =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb228-14"><a href="#cb228-14" tabindex="-1"></a>  <span class="at">path_table =</span> <span class="st">&quot;tables&quot;</span>, </span>
+<span id="cb228-15"><a href="#cb228-15" tabindex="-1"></a>  <span class="at">path_results =</span> <span class="st">&quot;results&quot;</span>,</span>
+<span id="cb228-16"><a href="#cb228-16" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb228-17"><a href="#cb228-17" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
+<span id="cb228-18"><a href="#cb228-18" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>## Finished unidimensional reference model.</code></pre>
-<pre><code>## Warning in reached_maxiter(dimensionality[[d]], paste0(&quot;&#39;&quot;, d, &quot;-dimensional&#39;&quot;)): Maximum number of iterations were reached for the IRT model &#39;texttype_num-dimensional&#39;! Model did not converge.</code></pre>
 <pre><code>## Finished texttype_num model.</code></pre>
 <pre><code>## 
 ## RESULTS:</code></pre>
 <pre><code>## [1] &quot;Cor-Var uni&quot;
 ##       [,1]
-## [1,] 0.139
+## [1,] 1.383
 ## [1] &quot;Cor-Var texttype_num&quot;
-##        1      2      3      4     5
-## 1  0.316 -0.159  0.422  0.000 0.192
-## 2 -0.159  1.151 -0.521  0.945 0.485
-## 3  0.422 -0.521  0.819 -0.229 0.485
-## 4  0.000  0.945 -0.229  0.951 0.734
-## 5  0.192  0.485  0.485  0.734 0.725
+##       dim1  dim2  dim3  dim4  dim5
+## dim1 3.132 0.710 0.768 0.600 0.664
+## dim2 0.710 3.033 0.751 0.713 0.655
+## dim3 0.768 0.751 1.772 0.604 0.701
+## dim4 0.600 0.713 0.604 1.691 0.649
+## dim5 0.664 0.655 0.701 0.649 1.822
 ## [1] &quot;Goodness of fit&quot;
 ##     Stat    uni texttype_num
 ## 1  Npars     41           55
-## 2 loglik -13461       -13648
-## 3    AIC  27003        27406
-## 4    BIC  27235        27716</code></pre>
+## 2 loglik -12910       -12839
+## 3    AIC  25903        25788
+## 4    BIC  26135        26099</code></pre>
 <pre><code>## </code></pre>
 </div>
-<div id="create-scores-and-suf" class="section level1" number="8">
-<h1><span class="header-section-number">8</span> Create Scores and
+<div id="create-scores-and-suf" class="section level1" number="9">
+<h1><span class="header-section-number">9</span> Create Scores and
 SUF</h1>
-<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb240-1"><a href="#cb240-1" tabindex="-1"></a>scores <span class="ot">&lt;-</span> NEPSroutines<span class="sc">::</span><span class="fu">create_scores</span>(</span>
-<span id="cb240-2"><a href="#cb240-2" tabindex="-1"></a>  resp,</span>
-<span id="cb240-3"><a href="#cb240-3" tabindex="-1"></a>  vars,</span>
-<span id="cb240-4"><a href="#cb240-4" tabindex="-1"></a>  <span class="at">score_name =</span> <span class="st">&quot;reg7&quot;</span>,</span>
-<span id="cb240-5"><a href="#cb240-5" tabindex="-1"></a>  <span class="at">select =</span> <span class="st">&quot;mixed&quot;</span>,</span>
-<span id="cb240-6"><a href="#cb240-6" tabindex="-1"></a>  <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>,</span>
-<span id="cb240-7"><a href="#cb240-7" tabindex="-1"></a>  <span class="at">scoring =</span> <span class="st">&quot;scoring&quot;</span>,</span>
-<span id="cb240-8"><a href="#cb240-8" tabindex="-1"></a>  <span class="at">mvs =</span> mvs,</span>
-<span id="cb240-9"><a href="#cb240-9" tabindex="-1"></a>  <span class="at">wle =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb240-10"><a href="#cb240-10" tabindex="-1"></a>  <span class="at">sum_score =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb240-11"><a href="#cb240-11" tabindex="-1"></a>  <span class="at">sum_select =</span> <span class="st">&quot;dich&quot;</span>,</span>
-<span id="cb240-12"><a href="#cb240-12" tabindex="-1"></a>  <span class="at">metap =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb240-13"><a href="#cb240-13" tabindex="-1"></a>  <span class="at">return =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb240-14"><a href="#cb240-14" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb240-15"><a href="#cb240-15" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb240-16"><a href="#cb240-16" tabindex="-1"></a>  <span class="at">path_results =</span> <span class="st">&quot;results&quot;</span></span>
-<span id="cb240-17"><a href="#cb240-17" tabindex="-1"></a>)</span></code></pre></div>
-<pre><code>## Warning in steps_analysis(pcm_model = irt$model.pcm, suf_item_names =
-## suf_item_names, : NAs durch Umwandlung erzeugt</code></pre>
-<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb242-1"><a href="#cb242-1" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">create_suf</span>(</span>
-<span id="cb242-2"><a href="#cb242-2" tabindex="-1"></a>  resp,</span>
-<span id="cb242-3"><a href="#cb242-3" tabindex="-1"></a>  vars,</span>
-<span id="cb242-4"><a href="#cb242-4" tabindex="-1"></a>  <span class="at">select =</span> <span class="st">&quot;mixed&quot;</span>,</span>
-<span id="cb242-5"><a href="#cb242-5" tabindex="-1"></a>  <span class="at">competence =</span> <span class="st">&quot;Reading&quot;</span>,</span>
-<span id="cb242-6"><a href="#cb242-6" tabindex="-1"></a>  <span class="at">scores =</span> scores,</span>
-<span id="cb242-7"><a href="#cb242-7" tabindex="-1"></a>  <span class="at">score_name =</span> <span class="st">&quot;reg7&quot;</span>,</span>
-<span id="cb242-8"><a href="#cb242-8" tabindex="-1"></a>  <span class="at">return =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb242-9"><a href="#cb242-9" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">&quot;suf&quot;</span></span>
-<span id="cb242-10"><a href="#cb242-10" tabindex="-1"></a>)</span></code></pre></div>
+<p>See vignettes <code>create_scores</code> and
+<code>create_suf</code>.</p>
+<div class="sourceCode" id="cb234"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb234-1"><a href="#cb234-1" tabindex="-1"></a>scores <span class="ot">&lt;-</span> NEPSroutines<span class="sc">::</span><span class="fu">create_scores</span>(</span>
+<span id="cb234-2"><a href="#cb234-2" tabindex="-1"></a>  resp,</span>
+<span id="cb234-3"><a href="#cb234-3" tabindex="-1"></a>  vars,</span>
+<span id="cb234-4"><a href="#cb234-4" tabindex="-1"></a>  <span class="at">score_name =</span> <span class="st">&quot;reg7&quot;</span>,</span>
+<span id="cb234-5"><a href="#cb234-5" tabindex="-1"></a>  <span class="at">select =</span> <span class="st">&quot;mixed&quot;</span>,</span>
+<span id="cb234-6"><a href="#cb234-6" tabindex="-1"></a>  <span class="at">valid =</span> <span class="st">&quot;valid&quot;</span>,</span>
+<span id="cb234-7"><a href="#cb234-7" tabindex="-1"></a>  <span class="at">scoring =</span> <span class="st">&quot;scoring&quot;</span>,</span>
+<span id="cb234-8"><a href="#cb234-8" tabindex="-1"></a>  <span class="at">mvs =</span> mvs,</span>
+<span id="cb234-9"><a href="#cb234-9" tabindex="-1"></a>  <span class="at">wle =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb234-10"><a href="#cb234-10" tabindex="-1"></a>  <span class="at">sum_score =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb234-11"><a href="#cb234-11" tabindex="-1"></a>  <span class="at">sum_select =</span> <span class="st">&quot;dich&quot;</span>,</span>
+<span id="cb234-12"><a href="#cb234-12" tabindex="-1"></a>  <span class="at">metap =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb234-13"><a href="#cb234-13" tabindex="-1"></a>  <span class="at">return =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb234-14"><a href="#cb234-14" tabindex="-1"></a>  <span class="at">save =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb234-15"><a href="#cb234-15" tabindex="-1"></a>  <span class="at">overwrite =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb234-16"><a href="#cb234-16" tabindex="-1"></a>  <span class="at">path_results =</span> <span class="st">&quot;results&quot;</span></span>
+<span id="cb234-17"><a href="#cb234-17" tabindex="-1"></a>)</span>
+<span id="cb234-18"><a href="#cb234-18" tabindex="-1"></a></span>
+<span id="cb234-19"><a href="#cb234-19" tabindex="-1"></a>NEPSroutines<span class="sc">::</span><span class="fu">create_suf</span>(</span>
+<span id="cb234-20"><a href="#cb234-20" tabindex="-1"></a>  resp,</span>
+<span id="cb234-21"><a href="#cb234-21" tabindex="-1"></a>  vars,</span>
+<span id="cb234-22"><a href="#cb234-22" tabindex="-1"></a>  <span class="at">select =</span> <span class="st">&quot;mixed&quot;</span>,</span>
+<span id="cb234-23"><a href="#cb234-23" tabindex="-1"></a>  <span class="at">competence =</span> <span class="st">&quot;Reading&quot;</span>,</span>
+<span id="cb234-24"><a href="#cb234-24" tabindex="-1"></a>  <span class="at">scores =</span> scores,</span>
+<span id="cb234-25"><a href="#cb234-25" tabindex="-1"></a>  <span class="at">score_name =</span> <span class="st">&quot;reg7&quot;</span>,</span>
+<span id="cb234-26"><a href="#cb234-26" tabindex="-1"></a>  <span class="at">return =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb234-27"><a href="#cb234-27" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">&quot;suf&quot;</span></span>
+<span id="cb234-28"><a href="#cb234-28" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>## SUF successfully saved!</code></pre>
-<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb244-1"><a href="#cb244-1" tabindex="-1"></a><span class="fu">rm</span>(scores)</span></code></pre></div>
+<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="#cb236-1" tabindex="-1"></a><span class="fu">rm</span>(scores)</span></code></pre></div>
 </div>
-<div id="session" class="section level1" number="9">
-<h1><span class="header-section-number">9</span> Session</h1>
-<div class="sourceCode" id="cb245"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb245-1"><a href="#cb245-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
-<pre><code>## R version 4.6.0 (2026-04-24 ucrt)
+<div id="session" class="section level1" number="10">
+<h1><span class="header-section-number">10</span> Session</h1>
+<p>Print session information (e.g., loaded packages). Important for
+reproducible results!</p>
+<div class="sourceCode" id="cb237"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb237-1"><a href="#cb237-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.6.1 (2026-06-24 ucrt)
 ## Platform: x86_64-w64-mingw32/x64
 ## Running under: Windows 11 x64 (build 26200)
 ## 
@@ -4069,27 +4111,27 @@ SUF</h1>
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] NEPSroutines_1.2.1
+## [1] NEPSroutines_1.3.0
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] gtable_0.3.6            CDM_8.3-14              xfun_0.57              
 ##  [4] bslib_0.11.0            ggplot2_4.0.3           lattice_0.22-9         
-##  [7] vctrs_0.7.3             tools_4.6.0             generics_0.1.4         
-## [10] stats4_4.6.0            parallel_4.6.0          tibble_3.3.1           
+##  [7] vctrs_0.7.3             tools_4.6.1             generics_0.1.4         
+## [10] stats4_4.6.1            parallel_4.6.1          tibble_3.3.1           
 ## [13] pkgconfig_2.0.3         data.table_1.18.4       RColorBrewer_1.1-3     
 ## [16] S7_0.2.2                uuid_1.2-2              lifecycle_1.0.5        
-## [19] flextable_0.9.12        compiler_4.6.0          farver_2.1.2           
+## [19] flextable_0.9.12        compiler_4.6.1          farver_2.1.2           
 ## [22] textshaping_1.0.5       fontquiver_0.2.1        fontLiberation_0.1.0   
 ## [25] htmltools_0.5.9         sass_0.4.10             WrightMap_1.4          
 ## [28] yaml_2.3.12             pillar_1.11.1           jquerylib_0.1.4        
-## [31] tidyr_1.3.2             MASS_7.3-65             admisc_0.40            
+## [31] tidyr_1.3.2             MASS_7.3-65             admisc_0.41            
 ## [34] openssl_2.4.1           cachem_1.1.0            fontBitstreamVera_0.1.1
 ## [37] polycor_0.8-2           tidyselect_1.2.1        zip_2.3.3              
 ## [40] digest_0.6.39           mvtnorm_1.4-0           stringi_1.8.7          
 ## [43] dplyr_1.2.1             purrr_1.2.2             forcats_1.0.1          
-## [46] fastmap_1.2.0           grid_4.6.0              colorspace_2.1-2       
-## [49] cli_3.6.6               magrittr_2.0.5          TAM_4.3-25             
-## [52] withr_3.0.2             gdtools_0.5.1           scales_1.4.0           
+## [46] fastmap_1.2.0           grid_4.6.1              cli_3.6.6              
+## [49] magrittr_2.0.5          patchwork_1.3.2         TAM_4.3-25             
+## [52] withr_3.0.3             gdtools_0.5.1           scales_1.4.0           
 ## [55] rmarkdown_2.31          officer_0.7.5           otel_0.2.0             
 ## [58] askpass_1.2.1           ragg_1.5.2              hms_1.1.4              
 ## [61] openxlsx_4.2.8.1        evaluate_1.0.5          knitr_1.51             
