@@ -548,6 +548,41 @@ test_that("irt_summary() produces valid output for polytomous models", {
 })
 
 
+test_that("print_irt_summary() describes the percentage correct for all item types", {
+
+  skip_if_not_installed("MASS")
+
+  mvs <- c(OM = -97, NV = -95, NR = -94)
+  pc_message <- function(ex, model, disc) {
+    irt_sum <- irt_summary(
+      resp = ex$resp, vars = ex$vars, valid = "valid", mvs = mvs,
+      results = model, disc = disc, save = FALSE, warn = FALSE
+    )
+    msgs <- capture_messages(print_irt_summary(model, irt_sum))
+    grep("Percentage correct:", msgs, fixed = TRUE, value = TRUE)
+  }
+
+  data(ex1)
+  dich <- pc_message(ex1, fit_dich("1PL"), fit_dich("2PL"))
+  expect_length(dich, 1)
+  expect_no_match(dich, "dichotomous|polytomous")
+
+  data(ex2)
+  poly <- pc_message(ex2, fit_poly("PCM2"), fit_poly("GPCM"))
+  expect_length(poly, 1)
+  expect_no_match(poly, "dichotomous")
+  poly_items <- ex2$vars$item[ex2$vars$mixed & !ex2$vars$dich]
+  expect_match(
+    poly,
+    paste0("For polytomous items (", list_elements(poly_items), "), the ",
+           "percentage is the mean item score relative to the highest ",
+           "observed score."),
+    fixed = TRUE
+  )
+
+})
+
+
 test_that("irt_model_fit() produces valid output for polytomous models", {
 
   skip_if_not_installed("MASS")
