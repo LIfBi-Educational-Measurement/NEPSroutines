@@ -90,9 +90,8 @@ time; most fixes in WP 1.1 and 1.2 are small reviews.
 
 ## Decisions (due 2027-01-08)
 
-Settled before coding starts, so no work package waits for them. #96 and
-#194 are the exceptions: their design decisions are taken at the start of
-WP 2.3b.
+Settled before coding starts, so no work package waits for them. #96 is the
+exception: its design decision is taken at the start of WP 2.3b.
 
 - #124 add SK and RS missing types: domain answer (open)
 - #129 review `survey_paper.bib` template: domain answer (open)
@@ -110,8 +109,6 @@ WP 2.3b.
 - #195: remove the outdated `TblPars()` footnote on percent correct for
   polytomous items, or rewrite it, which changes the table in every report
   with polytomous items (open)
-- #194: fixed cut-offs for the aQ3 and rit flags or arguments, due at the
-  start of WP 2.3b (open)
 - #112: reimplement `wright_map()` directly with ggplot2, or via
   `ShinyItemAnalysis::ggWrightMap` as the issue title says; this decides
   which dependency replaces WrightMap (open)
@@ -139,6 +136,8 @@ Status: planned
 - #177 printed IRT summary still says "within dichotomous items" for the
   percentage of correct responses, which also covers polytomous items since
   v1.3.0
+- #194 printed IRT summary: aQ3 summary and items flagged by aQ3 of at least
+  .20 or rit < .20, with fixed cut-offs (split out of #177; done in #193)
 - Add a `NEWS.md`, with earlier versions taken from the existing GitHub
   release notes. Needed for the v1.3.1 release checklist. Copying the GitHub
   release text from it is part of the proposed `CONTRIBUTING` changes (see
@@ -299,8 +298,6 @@ Status: planned
 - #116 add `item` argument to `GetMvi()`
 - #169 confirmation messages in validation check functions (moved from
   WP 2.4 to spread the review load)
-- #194 printed IRT summary: aQ3 summary and items flagged by aQ3 > .20 or
-  rit < .20 (split out of #177)
 - #96 opt-in kernel smoothing for empirical ICC curves; first decide the
   kernel and how the bandwidth is chosen, then build it on the reworked plot
   code. If the schedule slips, #96 moves after July 2027 first.
@@ -336,3 +333,9 @@ restructuring of the package (such as #119) comes after July 2027.
   changes the saved output format, so it needs a decision with the
   co-authors first. Placed here provisionally; it is closely related to the
   report template item above.
+- #199 harmonize the cut-offs used to flag items (WMNSQ, t, rit, aQ3, DIF,
+  distractors) across the printouts, argument defaults, vignettes and the
+  report template, with one systematic check of all cut-offs. Done together
+  with #188, because cut-offs applied to rounded values only work once
+  results are no longer loaded from rounded tables. Needs a domain decision
+  on the values and boundaries.
